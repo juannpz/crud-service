@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-net --allow-read --allow-env --watch index.ts",
+    "start": "deno run --allow-net --allow-read --allow-env index.ts"
+  },
+  "imports": {
+    "@juannpz/deno-server-tools": "jsr:@juannpz/deno-server-tools@^0.11.0",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
+    "djwt": "npm:djwt@^2.0.0"
+  }
+}
