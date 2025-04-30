@@ -1,7 +1,7 @@
 import { IAuthConfig, IServiceConfig, IServiceUrls } from "./service.definition.ts";
 import { checkEnv } from "./service.util.ts";
 
-export function getConfig(): IServiceConfig {
+export function getConfig() {
     const config: IServiceConfig = {
         authConfig: getAuthConfig(),
         serviceUrls: getServiceUrls()
