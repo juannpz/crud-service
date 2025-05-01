@@ -1,6 +1,6 @@
-import { addTestRequest } from "./request/request.definition.ts";
+import { addRequest } from "./request/request.definition.ts";
+import { createServer } from "@juannpz/deno-service-tools";
 import { initManager } from "./manager/manager.config.ts";
-import { createServer } from '@juannpz/deno-server-tools';
 import { getConfig } from "./service.config.ts";
 
 const server = createServer();
@@ -10,7 +10,7 @@ export function init() {
 
     initManager(config);
 
-    addTestRequest(server);
+    addRequest(server);
 
     server.start();
 }

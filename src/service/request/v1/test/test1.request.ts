@@ -1,4 +1,4 @@
-import { Router } from "@juannpz/deno-server-tools";
+import { Router } from "@juannpz/deno-service-tools";
 
 export const test1Request = Router.get('/test1/:id')
     .describe('test 1')

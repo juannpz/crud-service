@@ -1,5 +1,5 @@
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
-import { createResponseFromFetch, Header, JWTManager } from "@juannpz/deno-server-tools";
+import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
 import { buildAuthHeader } from "./src/service/request/request.util.ts";
 
 JWTManager.init('test');
@@ -22,7 +22,7 @@ async function testRequest() {
     const authHeader = buildAuthHeader(generateJwtResult.data);
 
     const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/test/test1/1`, {
+        fetch(`http://localhost:3000/v1/crud/user/1`, {
             headers: authHeader
         })
     );

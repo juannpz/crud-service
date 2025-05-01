@@ -1,6 +1,6 @@
+import { JWTManager } from "@juannpz/deno-service-tools";
 import { IJWTPayload, keyGenerationConfig } from "../service.definition.ts";
-import { JWTManager } from "@juannpz/deno-server-tools";
-import { Context } from "jsr:@hono/hono@4.7.2";
+import { Context } from "jsr:@hono/hono@4.7.8";
 
 export async function basicAuthMiddleware(c: Context, next: () => Promise<void | Response>) {
     const token = c.req.header('Authorization');
