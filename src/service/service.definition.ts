@@ -5,18 +5,18 @@ export interface IJWTPayload extends Payload {
 }
 
 export const keyGenerationConfig: IGenerateKeyConfig = {
-    algorithm: { name: 'HMAC', hash: 'SHA-256' },
+    algorithm: { name: "HMAC", hash: "SHA-256" },
     extractable: false,
     format: "raw",
-    keyUsages: ['sign', 'verify']
+    keyUsages: ["sign", "verify"]
 };
 
 export const JWTPayload: IJWTPayload = {
     userId: 1,
-    aud: 'test',
+    aud: "test",
     exp: getNumericDate(60 * 60),
-    iss: 'test',
-    sub: 'test'
+    iss: "test",
+    sub: "test"
 };
 
 export interface IServiceConfig {

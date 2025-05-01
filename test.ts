@@ -2,10 +2,10 @@ import { buildAuthHeaders } from "./src/service/request/request.util.ts";
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
 import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
 
-JWTManager.init('test');
+JWTManager.init("test");
 
 const JWTConfigHeaders: Header = {
-    alg: 'HS256'
+    alg: "HS256"
 }
 
 async function buildConfig() {
@@ -45,15 +45,15 @@ async function createUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/crud/user`, {
+        fetch(`http://localhost:3000/v1/crud/user?format=object`, {
             headers: {
                 ...configHeaders,
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             },
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({
                 metadata: {
-                    name: 'test'
+                    name: "test"
                 }
             })
         })

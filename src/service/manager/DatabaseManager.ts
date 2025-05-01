@@ -1,7 +1,7 @@
 import { selectData, selectTsquery, insertInto, insertIntoData } from "@nodef/extra-sql";
-import { IBuildQueryResult, QueryConfig, QueryType } from "../db/db.definition.ts";
+import { IBuildQueryResult, QueryConfig, QueryResult, QueryType, RetrievalFormat } from "../db/db.definition.ts";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
-import { Client, QueryArrayResult, QueryObjectResult } from '@db/postgres';
+import { Client, QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { IDatabaseConfig } from "../service.definition.ts";
 
 export class DatabaseManager {
@@ -37,7 +37,25 @@ export class DatabaseManager {
         }
     }
 
-    public static async queryObject<T extends Record<string, unknown>>(config: QueryConfig): Promise<GenericResponse<Required<QueryObjectResult<T>>>> {
+    public static async query<T>(config: QueryConfig): Promise<GenericResponse<Required<QueryResult<T>>>> {
+        try {
+            switch (config.retrievalFormat) {
+                case RetrievalFormat.ARRAY:
+                    return await this.queryArray<T[]>(config);
+
+                case RetrievalFormat.OBJECT:
+                    return await this.queryObject<T>(config);
+            
+                default:
+                    return buildResponse({ success: false, message: `Inavalid retrieval format: ${config.retrievalFormat}` });
+            }
+
+        } catch (error) {
+            return buildResponse({ success: false, error });
+        }
+    }
+
+    private static async queryObject<T>(config: QueryConfig): Promise<GenericResponse<Required<QueryObjectResult<T>>>> {
         if (!this.client)
             return buildResponse({ success: false, message: "Postgres client not initialized" });
 
@@ -104,6 +122,8 @@ export class DatabaseManager {
                     queryString = insertInto(config.table, config.data);
                 }
 
+                queryString = this.addReturningToQuery(queryString);
+
                 break;
         
             default:
@@ -116,7 +136,10 @@ export class DatabaseManager {
         return buildResponse({ success: true, data: { queryString, queryData } });
     }
 
-    private static async generate() {
+    private static addReturningToQuery(query: string) {
+        if (!query.includes("RETURNING"))
+            query = query.replace(";", " RETURNING *;");
 
+        return query;
     }
 }
