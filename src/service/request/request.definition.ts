@@ -1,3 +1,4 @@
+import { createUserRequest } from "./v1/user/createUser.request.ts";
 import { basicAuthMiddleware } from "../middleware/middleware.ts";
 import { getUserRequest } from "./v1/user/getUser.request.ts";
 import { ServerBuilder } from "@juannpz/deno-service-tools";
@@ -9,7 +10,7 @@ export function addRequest(server: ServerBuilder) {
 }
 
 const testRequest = [test1Request];
-const userRequest = [getUserRequest];
+const userRequest = [getUserRequest, createUserRequest];
 
 function addTestRequest(server: ServerBuilder) {
     server.group('/v1/test', (app) => {

@@ -1,5 +1,5 @@
-import { IBuildQueryResult, ISelectQueryConfig, QueryConfig, QueryType } from "../db/db.definition.ts";
 import { selectData, selectTsquery, insertInto, insertIntoData } from "@nodef/extra-sql";
+import { IBuildQueryResult, QueryConfig, QueryType } from "../db/db.definition.ts";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
 import { Client, QueryArrayResult, QueryObjectResult } from '@db/postgres';
 import { IDatabaseConfig } from "../service.definition.ts";
@@ -37,7 +37,7 @@ export class DatabaseManager {
         }
     }
 
-    public static async queryObject<T extends Record<string, unknown>>(config: ISelectQueryConfig): Promise<GenericResponse<QueryObjectResult<T>>> {
+    public static async queryObject<T extends Record<string, unknown>>(config: QueryConfig): Promise<GenericResponse<Required<QueryObjectResult<T>>>> {
         if (!this.client)
             return buildResponse({ success: false, message: "Postgres client not initialized" });
 
@@ -49,14 +49,14 @@ export class DatabaseManager {
 
             const queryResult = await this.client.queryObject<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
 
-            return buildResponse({ success: true, data: queryResult });
+            return buildResponse({ success: true, data: queryResult as Required<QueryObjectResult<T>> });
 
         } catch (error) {
             return buildResponse({ success: false, error });
         }
     }
 
-    public static async queryArray<T extends unknown[]>(config: ISelectQueryConfig): Promise<GenericResponse<QueryArrayResult<T>>> {
+    public static async queryArray<T extends unknown[]>(config: QueryConfig): Promise<GenericResponse<Required<QueryArrayResult<T>>>> {
         if (!this.client)
             return buildResponse({ success: false, message: "Postgres client not initialized" });
 
@@ -68,7 +68,7 @@ export class DatabaseManager {
 
             const queryResult = await this.client.queryArray<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
 
-            return buildResponse({ success: true, data: queryResult });
+            return buildResponse({ success: true, data: queryResult as Required<QueryArrayResult<T>> });
 
         } catch (error) {
             return buildResponse({ success: false, error });
@@ -117,6 +117,6 @@ export class DatabaseManager {
     }
 
     private static async generate() {
-        
+
     }
 }

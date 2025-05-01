@@ -1,11 +1,7 @@
-export function buildAuthHeader(token: string) {
-    return {
-        Authorization: `Bearer ${token}`
-    }
+export function buildAuthHeaders(token: string) {
+    return { Authorization: `Bearer ${token}` };
 }
 
-export function reBuildAuthHeader(req: Request) {
-    return {
-        Authorization: req.headers.get('Authorization')
-    }
+export function reBuildAuthHeaders(req: Request) {
+    return { Authorization: req.headers.get('Authorization') };
 }

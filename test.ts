@@ -1,6 +1,6 @@
+import { buildAuthHeaders } from "./src/service/request/request.util.ts";
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
 import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
-import { buildAuthHeader } from "./src/service/request/request.util.ts";
 
 JWTManager.init('test');
 
@@ -8,30 +8,62 @@ const JWTConfigHeaders: Header = {
     alg: 'HS256'
 }
 
-async function testRequest() {
+async function buildConfig() {
     const generateJwtResult = await JWTManager.generate<IJWTPayload>(JWTConfigHeaders, JWTPayload, keyGenerationConfig);
 
     if (!generateJwtResult.success) {
-        console.log(generateJwtResult.message);
+        console.error(generateJwtResult.message);
 
         return;
     }
 
-    console.log(generateJwtResult.data);
+    return buildAuthHeaders(generateJwtResult.data);
+}
 
-    const authHeader = buildAuthHeader(generateJwtResult.data);
+async function getUserRequest() {
+    const configHeaders = await buildConfig();
 
-    const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/crud/user/1`, {
-            headers: authHeader
+    if (!configHeaders)
+        return;
+
+    const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
+        fetch(`http://localhost:3000/v1/crud/user`, {
+            headers: configHeaders
         })
     );
 
-    if (response.success) {
-        console.log("Datos obtenidos:", response.data);
-    } else {
+    if (response.success)
+        console.log("Response:", response.data);
+    else 
         console.error(`Error: ${response.message}`);
-    }
 }
 
-testRequest();
+async function createUserRequest() {
+    const configHeaders = await buildConfig();
+
+    if (!configHeaders)
+        return;
+
+    const response = await createResponseFromFetch<{ message: string, userId: number }>(
+        fetch(`http://localhost:3000/v1/crud/user`, {
+            headers: {
+                ...configHeaders,
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                metadata: {
+                    name: 'test'
+                }
+            })
+        })
+    );
+
+    if (response.success)
+        console.log("Response:", response.data);
+    else
+        console.error(`Error: ${response.message}`);
+}
+
+// getUserRequest();
+createUserRequest();

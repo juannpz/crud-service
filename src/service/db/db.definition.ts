@@ -1,6 +1,6 @@
 import { SelectTsqueryOptions } from "@nodef/extra-sql";
 
-export interface IQueryConfig {
+interface IQueryConfig {
     type: QueryType;
     table: DatabaseTable;
     conditions: Record<string, unknown>;
@@ -24,13 +24,13 @@ export interface ITextSearchSelectQueryConfig extends IQueryConfig {
 export interface IInsertQueryConfig extends IQueryConfig {
     type: QueryType.INSERT;
     isParameterized: false;
-    data: Record<string, unknown>[];
+    data: Iterable<Record<string, unknown>>;
 }
 
 export interface IParameterizedInsertQueryConfig extends IQueryConfig {
     type: QueryType.INSERT;
     isParameterized: true;
-    data: Iterable<Record<string, unknown>>;
+    data: Record<string, unknown>[];
 }
 
 export interface ICreateTableQueryConfig extends IQueryConfig {
@@ -38,7 +38,7 @@ export interface ICreateTableQueryConfig extends IQueryConfig {
     data: string;
 }
 
-export type QueryConfig = ISelectQueryConfig | ITextSearchSelectQueryConfig | IInsertQueryConfig;
+export type QueryConfig = ISelectQueryConfig | ITextSearchSelectQueryConfig | IInsertQueryConfig | IParameterizedInsertQueryConfig;
 
 export interface IBuildQueryResult {
     queryString: string;
