@@ -1,6 +1,6 @@
-import { DatabaseTable, QueryType } from "../../../db/db.definition.ts";
+import { DatabaseTable, QueryType } from "../../../database/database.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IUserTable } from "../../../db/user/user.definition.ts";
+import { IUser } from "../../../database/users/users.definition.ts";
 import { IContextVariables } from "../../request.definition.ts";
 import { getContextVariables } from "../../request.util.ts";
 import { Router } from "@juannpz/deno-service-tools";
@@ -9,7 +9,7 @@ interface IBody extends Record<string, unknown> {
     metadata: Record<string, unknown>;
 }
 
-export const createUserRequest = Router.post<IContextVariables>("/user")
+export const createUserRequest = Router.post<IContextVariables>("/users")
     .describe("User creation")
     .body<IBody>()
     .queryParam("format", { required: true })
@@ -20,9 +20,9 @@ export const createUserRequest = Router.post<IContextVariables>("/user")
 
             const { format } = getContextVariables(context.c);
 
-            const createUserResult = await DatabaseManager.query<IUserTable>({
+            const createUserResult = await DatabaseManager.query<IUser>({
                 conditions: {},
-                table: DatabaseTable.USER,
+                table: DatabaseTable.USERS,
                 retrievalFormat: format,
                 type: QueryType.INSERT,
                 isParameterized: false,

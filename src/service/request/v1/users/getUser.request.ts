@@ -1,11 +1,11 @@
-import { QueryType, DatabaseTable } from "../../../db/db.definition.ts";
+import { QueryType, DatabaseTable } from "../../../database/database.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IUserTable } from "../../../db/user/user.definition.ts";
+import { IUser } from "../../../database/users/users.definition.ts";
 import { IContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
 import { getContextVariables } from "../../request.util.ts";
+import { Router } from "@juannpz/deno-service-tools";
 
-export const getUserRequest = Router.get<IContextVariables>("/user/:id")
+export const getUserRequest = Router.get<IContextVariables>("/users/:id")
     .describe("User retrieval")
     .pathParam("id", { validator: () => {
         return true;
@@ -17,11 +17,11 @@ export const getUserRequest = Router.get<IContextVariables>("/user/:id")
 
         const { format } = getContextVariables(context.c);
 
-        const getUserResult = await DatabaseManager.query<IUserTable<{ metadata: Record<string, unknown> }>>({
+        const getUserResult = await DatabaseManager.query<IUser<{ metadata: Record<string, unknown> }>>({
             conditions: {
                 user_id: id
             },
-            table: DatabaseTable.USER,
+            table: DatabaseTable.USERS,
             retrievalFormat: format,
             type: QueryType.SELECT,
             isTextSearch: false

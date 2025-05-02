@@ -27,7 +27,7 @@ async function getUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
-        fetch(`http://localhost:3000/v1/crud/user`, {
+        fetch(`http://localhost:3000/v1/crud/users`, {
             headers: configHeaders
         })
     );
@@ -45,7 +45,7 @@ async function createUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/crud/user?format=object`, {
+        fetch(`http://localhost:3000/v1/crud/users?format=object`, {
             headers: {
                 ...configHeaders,
                 "Content-Type": "application/json"

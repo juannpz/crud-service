@@ -1,28 +1,14 @@
+import { IBuildQueryResult, QueryConfig, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
 import { selectData, selectTsquery, insertInto, insertIntoData } from "@nodef/extra-sql";
-import { IBuildQueryResult, QueryConfig, QueryResult, QueryType, RetrievalFormat } from "../db/db.definition.ts";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
-import { Client, QueryArrayResult, QueryObjectResult } from "@db/postgres";
-import { IDatabaseConfig } from "../service.definition.ts";
+import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
+import { DatabaseClient } from "../database/DatabaseClient.ts";
+import { addReturningToQuery } from "../database/database.util.ts";
 
-export class DatabaseManager {
-    private static client: Client | null = null;
+export class DatabaseManager extends DatabaseClient{
 
-    private constructor() { }
-
-    public static async init(config: IDatabaseConfig) {
-        this.client = new Client({
-            database: config.DB_NAME,
-            hostname: config.DB_HOST,
-            port: config.DB_PORT,
-            user: config.DB_USER,
-            password: config.DB_PASSWORD,
-            host_type: "tcp",
-            tls: {
-                enabled: false
-            }
-        });
-
-        await this.client.connect();
+    private constructor() {
+        super();
     }
 
     public static async disconnect(): Promise<GenericResponse<true>> {
@@ -122,7 +108,7 @@ export class DatabaseManager {
                     queryString = insertInto(config.table, config.data);
                 }
 
-                queryString = this.addReturningToQuery(queryString);
+                queryString = addReturningToQuery(queryString);
 
                 break;
         
@@ -134,12 +120,5 @@ export class DatabaseManager {
             return buildResponse({ success: false, message: "Could not build query" });
 
         return buildResponse({ success: true, data: { queryString, queryData } });
-    }
-
-    private static addReturningToQuery(query: string) {
-        if (!query.includes("RETURNING"))
-            query = query.replace(";", " RETURNING *;");
-
-        return query;
     }
 }

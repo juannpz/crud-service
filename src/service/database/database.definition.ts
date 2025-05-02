@@ -49,6 +49,23 @@ export interface IBuildQueryResult {
     queryData?: unknown[];
 }
 
+export enum ColumnDefaultValue {
+    CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP",
+    NOW = "NOW()",
+    NULL = "NULL",
+    TRUE = "TRUE",
+    FALSE = "FALSE",
+    ZERO = "0",
+    EMPTY_STRING = "''",
+    EMPTY_JSONB = "'{}'"
+}
+
+export interface ColumnConstraints {
+    notNull?: boolean;
+    default?: ColumnDefaultValue;
+    unique?: boolean;
+}
+
 export enum QueryType {
     SELECT = "SELECT",
     INSERT = "INSERT",
@@ -59,8 +76,9 @@ export enum QueryType {
 }
 
 export enum DatabaseTable {
-    USER = "users",
-    USER_CREDENTIALS = "user_credentials"
+    USERS = "users",
+    USER_CREDENTIALS = "user_credentials",
+    USER_STATUS = "user_status"
 }
 
 export enum QueryOperator {
@@ -70,7 +88,6 @@ export enum QueryOperator {
     GREATER_THAN_OR_EQUALS = ">=",
     LESS_THAN_OR_EQUALS = "<=",
     NOT_EQUALS = "<>",
-
     LIKE = "LIKE",
     IN = "IN",
     BETWEEN = "BETWEEN",
@@ -87,4 +104,28 @@ export enum QuerySeparator {
 export enum RetrievalFormat {
     OBJECT = "object",
     ARRAY = "array"
+}
+
+export enum PostgresDataType {
+    SMALLINT = "SMALLINT",
+    INTEGER = "INTEGER",
+    BIGINT = "BIGINT",
+    DECIMAL = "DECIMAL",
+    NUMERIC = "NUMERIC",
+    REAL = "REAL",
+    DOUBLE_PRECISION = "DOUBLE PRECISION",
+    SERIAL = "SERIAL",
+    BIGSERIAL = "BIGSERIAL",
+    VARCHAR = "VARCHAR",
+    TEXT = "TEXT",
+    CHAR = "CHAR",
+    TIMESTAMP = "TIMESTAMP",
+    TIMESTAMPTZ = "TIMESTAMPTZ",
+    DATE = "DATE",
+    TIME = "TIME",
+    BOOLEAN = "BOOLEAN",
+    JSON = "JSON",
+    JSONB = "JSONB",
+    UUID = "UUID",
+    ARRAY = "ARRAY"
 }

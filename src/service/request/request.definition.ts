@@ -1,8 +1,8 @@
 import { ContextVariables, ServerBuilder } from "@juannpz/deno-service-tools";
-import { createUserRequest } from "./v1/user/createUser.request.ts";
+import { createUserRequest } from "./v1/users/createUser.request.ts";
 import { basicAuthMiddleware } from "../middleware/middleware.ts";
-import { getUserRequest } from "./v1/user/getUser.request.ts";
-import { RetrievalFormat } from "../db/db.definition.ts";
+import { RetrievalFormat } from "../database/database.definition.ts";
+import { getUserRequest } from "./v1/users/getUser.request.ts";
 
 export interface IContextVariables extends ContextVariables {
     format: RetrievalFormat;
