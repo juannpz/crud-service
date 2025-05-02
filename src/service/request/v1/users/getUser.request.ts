@@ -17,7 +17,7 @@ export const getUserRequest = Router.get<IContextVariables>("/users/:id")
 
         const { format } = getContextVariables(context.c);
 
-        const getUserResult = await DatabaseManager.query<IUser<{ metadata: Record<string, unknown> }>>({
+        const getUserResult = await DatabaseManager.query<IUser>({
             conditions: {
                 user_id: id
             },

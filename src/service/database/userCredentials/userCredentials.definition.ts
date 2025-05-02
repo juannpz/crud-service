@@ -2,15 +2,15 @@ import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database
 import { applyColumnConstraints } from "../database.util.ts";
 import { createTable } from "@nodef/extra-sql";
 
-export interface IUserCredentials<M = Record<string, unknown>, P = Record<string, unknown>> {
+export interface IUserCredentials {
     identity_id: number;
     user_id: number;
     email: string;
     first_name: string;
     last_name: string;
     password: string;
-    phone_number: P
-    metadata: M;
+    phone_number: Record<string, unknown>;
+    metadata: Record<string, unknown>;
     created_at: Date;
     updated_at: Date;
 }

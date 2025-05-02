@@ -2,10 +2,10 @@ import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database
 import { applyColumnConstraints } from "../database.util.ts";
 import { createTable } from "@nodef/extra-sql";
 
-export interface IUser<T = Record<string, unknown>> {
+export interface IUser {
     user_id: number;
     user_status_id: number;
-    metadata: T;
+    metadata: Record<string, unknown>;
     created_at: Date;
     updated_at: Date;
 }

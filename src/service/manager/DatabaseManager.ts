@@ -1,8 +1,8 @@
+import { addReturningToQuery, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable } from "../database/database.util.ts";
 import { IBuildQueryResult, QueryConfig, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
 import { selectData, selectTsquery, insertInto, insertIntoData } from "@nodef/extra-sql";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
-import { addReturningToQuery, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable } from "../database/database.util.ts";
 import { DatabaseClient } from "../database/DatabaseClient.ts";
 
 export class DatabaseManager extends DatabaseClient{
@@ -123,8 +123,6 @@ export class DatabaseManager extends DatabaseClient{
     }
 
     private static formatQueryData(data: Record<string, unknown>[] | Iterable<Record<string, unknown>>) {
-        const dataWithoutNullAndUndefined = removeNullAndUndefinedFromIterable(data);
-
-        return stringifyObjectsInIterable(dataWithoutNullAndUndefined);
+        return stringifyObjectsInIterable(removeNullAndUndefinedFromIterable(data));
     }
 }
