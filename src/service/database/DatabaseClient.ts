@@ -23,6 +23,7 @@ export class DatabaseClient {
         }, 10);
 
         const client = await this.pool.connect();
+        
         try {
             await this.generateTables(client);
         } finally {

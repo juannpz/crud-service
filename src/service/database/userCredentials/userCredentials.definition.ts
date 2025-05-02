@@ -62,15 +62,15 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
 >(
     createTable(DatabaseTable.USER_CREDENTIALS, userCredentialsTable, { pk: UserCredentialsColumn.IDENTITY_ID }),
     {
-        created_at: { notNull: true, default: ColumnDefaultValue.NOW },
-        updated_at: { notNull: true, default: ColumnDefaultValue.NOW },
         user_id: { notNull: true, unique: true },
-        email: { notNull: true, unique: true },
-        password: { notNull: true },
         phone_number: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
+        email: { notNull: true, unique: true },
         first_name: { notNull: true },
         last_name: { notNull: true },
         metadata: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
+        password: { notNull: true },
+        created_at: { notNull: true, default: ColumnDefaultValue.NOW },
+        updated_at: { notNull: true, default: ColumnDefaultValue.NOW },
     },
     {
         user_id: {

@@ -1,4 +1,4 @@
-import { IJWTPayload, keyGenerationConfig } from "../service.definition.ts";
+import { IJWTPayload, keyGenerationConfig } from "../../service.definition.ts";
 import { JWTManager } from "@juannpz/deno-service-tools";
 import { Context } from "jsr:@hono/hono@4.7.8";
 

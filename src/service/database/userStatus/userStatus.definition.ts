@@ -34,13 +34,12 @@ const userStatusTable: IUserStatusTable = {
     updated_at: PostgresDataType.TIMESTAMPTZ
 }
 
-export const CREATE_USER_STATUS_TABLE_QUERY = applyColumnConstraints(
+export const CREATE_USER_STATUS_TABLE_QUERY = applyColumnConstraints<UserStatusColumn>(
     createTable(DatabaseTable.USER_STATUS, userStatusTable, { pk: UserStatusColumn.USER_STATUS_ID }),
     { 
-        [UserStatusColumn.CREATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
-        [UserStatusColumn.UPDATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
-        [UserStatusColumn.USER_STATUS_NAME]: { notNull: true, unique: true },
-        [UserStatusColumn.DESCRIPTION]: { notNull: true },
-        [UserStatusColumn.USER_STATUS_ID]: { notNull: true, unique: true }
+        user_status_name: { notNull: true, unique: true },
+        description: { notNull: true },
+        created_at: { notNull: true, default: ColumnDefaultValue.NOW },
+        updated_at: { notNull: true, default: ColumnDefaultValue.NOW },
     }
 );
