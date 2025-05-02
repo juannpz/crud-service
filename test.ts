@@ -1,6 +1,7 @@
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
 import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
 import { buildAuthHeaders } from "./src/service/request/request.util.ts";
+import { putUserRequest } from "./src/service/request/v1/user/putUser.request.ts";
 
 JWTManager.init("test");
 
@@ -27,7 +28,7 @@ async function getUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
-        fetch(`http://localhost:3000/v1/crud/users?format=object&user_id=2`, {
+        fetch(`http://localhost:3000/v1/crud/user?format=object&user_id=1`, {
             headers: configHeaders
         })
     );
@@ -106,7 +107,6 @@ async function createUserCredentialsRequest() {
                 last_name: "user1",
                 password: "user1",
                 phone_number: {
-                    updated_at: Date.now(),
                     country_indicator: "+54",
                     phone_number: "3546651160"
                 }
@@ -120,7 +120,61 @@ async function createUserCredentialsRequest() {
         console.error(`Error: ${response.message}`);
 }
 
+async function updateUserRequest() {
+    const configHeaders = await buildConfig();
+
+    if (!configHeaders)
+        return;
+
+    const response = await createResponseFromFetch<{ message: string, userId: number }>(
+        fetch(`http://localhost:3000/v1/crud/user/1?format=object`, {
+            headers: {
+                ...configHeaders,
+                "Content-Type": "application/json"
+            },
+            method: "PUT",
+            body: JSON.stringify({
+                metadata: {
+                    name: "newname"
+                }
+            })
+        })
+    );
+
+    if (response.success)
+        console.log("Response:", response.data);
+    else
+        console.error(`Error: ${response.message}`);
+}
+
+async function updateUserCredentialsRequest() {
+    const configHeaders = await buildConfig();
+
+    if (!configHeaders)
+        return;
+
+    const response = await createResponseFromFetch<{ message: string, userId: number }>(
+        fetch(`http://localhost:3000/v1/crud/user-credentials/1?format=object`, {
+            headers: {
+                ...configHeaders,
+                "Content-Type": "application/json"
+            },
+            method: "PUT",
+            body: JSON.stringify({
+                last_name: "newname"
+            })
+        })
+    );
+
+    if (response.success)
+        console.log("Response:", response.data);
+    else
+        console.error(`Error: ${response.message}`);
+}
+
 // getUserRequest();
 // createUserRequest();
-getUserCredentialsRequest();
+// getUserCredentialsRequest();
 // createUserCredentialsRequest();
+// updateUserRequest();
+updateUserCredentialsRequest();

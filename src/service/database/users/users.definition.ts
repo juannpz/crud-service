@@ -10,7 +10,7 @@ export interface IUser {
     updated_at: Date;
 }
 
-interface IUserTable extends Record<string, PostgresDataType> {
+interface IUsersTable extends Record<string, PostgresDataType> {
     user_id: PostgresDataType.SERIAL;
     user_status_id: PostgresDataType.INTEGER;
     metadata: PostgresDataType.JSONB;
@@ -26,7 +26,7 @@ export enum UserColumn {
     UPDATED_AT = "updated_at"
 }
 
-const userTable: IUserTable = {
+const usersTable: IUsersTable = {
     user_id: PostgresDataType.SERIAL,
     user_status_id: PostgresDataType.INTEGER,
     metadata: PostgresDataType.JSONB,
@@ -35,7 +35,7 @@ const userTable: IUserTable = {
 }
 
 export const CREATE_USER_TABLE_QUERY = applyColumnConstraints(
-    createTable(DatabaseTable.USERS, userTable, { pk: UserColumn.USER_ID }),
+    createTable(DatabaseTable.USERS, usersTable, { pk: UserColumn.USER_ID }),
     { 
         [UserColumn.CREATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
         [UserColumn.UPDATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },

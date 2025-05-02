@@ -9,9 +9,10 @@ interface IBody extends Record<string, unknown> {
     metadata: Record<string, unknown>;
 }
 
-export const postUserRequest = Router.post<IContextVariables>("/users")
-.describe("users insertion")
+export const postUserRequest = Router.post<IContextVariables>("/user")
+.describe("User creation")
 .body<IBody>()
+.validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .headerParam("Authorization")
 .withVariables<IContextVariables>()
@@ -29,11 +30,21 @@ export const postUserRequest = Router.post<IContextVariables>("/users")
             data: [ { user_status_id, metadata } ]
         });
 
-        if (!createUserResult.success)
-            return context.c.json({ message: createUserResult.message }, createUserResult.code);
+    if (!createUserResult.success) {
+        console.error(createUserResult.message);
+
+        return context.c.json({ message: createUserResult.message }, createUserResult.code);
+    }
 
         return context.c.json({
             message: `${createUserResult.data.rowCount} ${createUserResult.data.rowCount === 1 ? "entry" : "entrys"} created`,
             data: createUserResult.data.rows
         }, 200);
 });
+
+function validateBody(body: IBody) {
+    if (!body.user_status_id || !body.metadata)
+        return false;
+
+    return true;
+}

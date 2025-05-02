@@ -5,7 +5,7 @@ import { IContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
 export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-credentials/:user_id?")
-    .describe("User retrieval")
+    .describe("User credentials retrieval")
     .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
     .queryParam<"format", RetrievalFormat>("format", { required: true })
     .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
@@ -30,11 +30,14 @@ export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-cr
             isTextSearch: false
         });
 
-        if (!getUserCredentialsResult.success)
+        if (!getUserCredentialsResult.success) {
+            console.error(getUserCredentialsResult.message);
+
             return context.c.json({ message: getUserCredentialsResult.message }, getUserCredentialsResult.code);
+        }
 
         return context.c.json({
-            message: `Found ${getUserCredentialsResult.data.rowCount} ${getUserCredentialsResult.data.rowCount === 1 ? "row" : "rows"}`,
+            message: `Found ${getUserCredentialsResult.data.rowCount} ${getUserCredentialsResult.data.rowCount === 1 ? "entry" : "entrys"}`,
             data: getUserCredentialsResult.data.rows
         }, 200);
     });

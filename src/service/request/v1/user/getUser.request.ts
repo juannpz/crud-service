@@ -4,7 +4,7 @@ import { IUser } from "../../../database/users/users.definition.ts";
 import { IContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
-export const getUserRequest = Router.get<IContextVariables>("/users/:user_id?")
+export const getUserRequest = Router.get<IContextVariables>("/user/:user_id?")
 .describe("User retrieval")
 .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"format", RetrievalFormat>("format", { required: true })
@@ -29,8 +29,11 @@ export const getUserRequest = Router.get<IContextVariables>("/users/:user_id?")
         isTextSearch: false
     });
 
-    if (!getUserResult.success)
+    if (!getUserResult.success){
+        console.error(getUserResult.message);
+
         return context.c.json({ message: getUserResult.message }, getUserResult.code);
+    }
 
     return context.c.json({
         message: `Found ${getUserResult.data.rowCount} ${getUserResult.data.rowCount === 1 ? "row" : "rows"}`,

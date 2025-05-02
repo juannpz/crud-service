@@ -100,11 +100,11 @@ export class DatabaseManager extends DatabaseClient{
                 break;
 
             case QueryType.UPDATE: {
-                const { query, data } = updateData(options.table, options.conditions, this.formatObjectQueryData(options.data));
+                const { query, data } = updateData(options.table, { ...this.formatObjectQueryData(options.data), updated_at: new Date() }, options.conditions, options.operator, options.separator );
 
                 queryString = addReturningToQuery(query);;
                 queryData = data;
-
+                
                 break;
             }
         
