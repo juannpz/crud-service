@@ -1,25 +1,23 @@
-import { QueryType, DatabaseTable } from "../../../database/database.definition.ts";
+import { QueryType, DatabaseTable, RetrievalFormat } from "../../../database/database.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { IUser } from "../../../database/users/users.definition.ts";
 import { IContextVariables } from "../../request.definition.ts";
-import { getContextVariables } from "../../request.util.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
-export const getUserRequest = Router.get<IContextVariables>("/users/:id")
+export const getUserRequest = Router.get<IContextVariables>("/users/:user_id")
     .describe("User retrieval")
-    .pathParam("id", { validator: () => {
-        return true;
-    }})
+    .pathParam("user_id", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", { required: true })
     .headerParam("Authorization")
     .withVariables<IContextVariables>()
     .handler(async (context) => {
-        const { id } = context.params;
+        const { user_id } = context.params;
 
-        const { format } = getContextVariables(context.c);
+        const { format } = context.query;
 
         const getUserResult = await DatabaseManager.query<IUser>({
             conditions: {
-                user_id: id
+                user_id
             },
             table: DatabaseTable.USERS,
             retrievalFormat: format,

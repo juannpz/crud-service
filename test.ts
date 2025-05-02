@@ -27,7 +27,7 @@ async function getUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
-        fetch(`http://localhost:3000/v1/crud/users`, {
+        fetch(`http://localhost:3000/v1/crud/users/3?format=object&user_id=3`, {
             headers: configHeaders
         })
     );
@@ -65,5 +65,5 @@ async function createUserRequest() {
         console.error(`Error: ${response.message}`);
 }
 
-// getUserRequest();
-createUserRequest();
+getUserRequest();
+// createUserRequest();

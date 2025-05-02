@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@db/postgres@~0.19.5": "0.19.5",
     "jsr:@hono/hono@4.7.8": "4.7.8",
-    "jsr:@juannpz/deno-service-tools@~0.5.4": "0.5.4",
+    "jsr:@juannpz/deno-service-tools@~0.5.5": "0.5.5",
     "jsr:@nodef/extra-sql@~0.1.2": "0.1.2",
     "jsr:@std/bytes@^1.0.5": "1.0.5",
     "jsr:@std/crypto@^1.0.4": "1.0.4",
@@ -26,8 +26,8 @@
     "@hono/hono@4.7.8": {
       "integrity": "620b1eaab065196d4ebe02cff31f8d3a78c94f736ce2ca86ee14f5f26fe48ecd"
     },
-    "@juannpz/deno-service-tools@0.5.4": {
-      "integrity": "4477b97b9adaf01171a16bbd210e9fdf49e72308fe5ba4d001799a96797ac3fb",
+    "@juannpz/deno-service-tools@0.5.5": {
+      "integrity": "14c20da583bc9cd10f7df0e7d7c74ecdc5af0e96b9611bbdca74905d44c6f792",
       "dependencies": [
         "jsr:@hono/hono"
       ]
@@ -70,7 +70,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@db/postgres@~0.19.5",
-      "jsr:@juannpz/deno-service-tools@~0.5.4",
+      "jsr:@juannpz/deno-service-tools@~0.5.5",
       "jsr:@nodef/extra-sql@~0.1.2",
       "jsr:@std/dotenv@~0.225.3"
     ]
