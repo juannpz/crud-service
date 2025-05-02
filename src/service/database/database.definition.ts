@@ -1,7 +1,7 @@
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { SelectTsqueryOptions } from "@nodef/extra-sql";
 
-interface IQueryConfig {
+interface IQueryOptions {
     type: QueryType;
     table: DatabaseTable;
     conditions: Record<string, unknown>;
@@ -10,12 +10,12 @@ interface IQueryConfig {
     separator?: QuerySeparator;
 }
 
-export interface ISelectQueryConfig extends IQueryConfig {
+export interface ISelectQueryOptions extends IQueryOptions {
     type: QueryType.SELECT;
     isTextSearch: false;
 }
 
-export interface ITextSearchSelectQueryConfig extends IQueryConfig {
+export interface ITextSearchSelectQueryOptions extends IQueryOptions {
     type: QueryType.SELECT;
     isTextSearch: true;
     text: string;
@@ -23,24 +23,24 @@ export interface ITextSearchSelectQueryConfig extends IQueryConfig {
     options: SelectTsqueryOptions;
 }
 
-export interface IInsertQueryConfig extends IQueryConfig {
+export interface IInsertQueryOptions extends IQueryOptions {
     type: QueryType.INSERT;
     isParameterized: false;
     data: Iterable<Record<string, unknown>>;
 }
 
-export interface IParameterizedInsertQueryConfig extends IQueryConfig {
+export interface IParameterizedInsertQueryOptions extends IQueryOptions {
     type: QueryType.INSERT;
     isParameterized: true;
     data: Record<string, unknown>[];
 }
 
-export interface ICreateTableQueryConfig extends IQueryConfig {
-    type: QueryType.CREATE_TABLE;
-    data: string;
+export interface IUpdatedQueryOptions extends IQueryOptions {
+    type: QueryType.UPDATE;
+    data: Record<string, unknown>;
 }
 
-export type QueryConfig = ISelectQueryConfig | ITextSearchSelectQueryConfig | IInsertQueryConfig | IParameterizedInsertQueryConfig;
+export type QueryOptions = ISelectQueryOptions | ITextSearchSelectQueryOptions | IInsertQueryOptions | IParameterizedInsertQueryOptions | IUpdatedQueryOptions;
 
 export type QueryResult<T> = QueryObjectResult<T> | QueryArrayResult<T[]>;
 
@@ -65,6 +65,13 @@ export interface ColumnConstraints {
     notNull?: boolean;
     default?: ColumnDefaultValue;
     unique?: boolean;
+}
+
+export interface ForeignKeyConstraint<TargetTable = string, TargetColumn = string> {
+    table: TargetTable;
+    column: TargetColumn;
+    onDelete?: 'CASCADE' | 'SET NULL' | 'SET DEFAULT' | 'RESTRICT' | 'NO ACTION';
+    onUpdate?: 'CASCADE' | 'SET NULL' | 'SET DEFAULT' | 'RESTRICT' | 'NO ACTION';
 }
 
 export enum QueryType {

@@ -10,30 +10,30 @@ interface IBody extends Record<string, unknown> {
 }
 
 export const postUserRequest = Router.post<IContextVariables>("/users")
-    .describe("User creation")
-    .body<IBody>()
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
-    .headerParam("Authorization")
-    .withVariables<IContextVariables>()
-    .handler(async (context) => {
-            const { user_status_id, metadata } = context.body;
+.describe("users insertion")
+.body<IBody>()
+.queryParam<"format", RetrievalFormat>("format", { required: true })
+.headerParam("Authorization")
+.withVariables<IContextVariables>()
+.handler(async (context) => {
+        const { user_status_id, metadata } = context.body;
 
-            const { format } = context.query;
+        const { format } = context.query;
 
-            const createUserResult = await DatabaseManager.query<IUser>({
-                conditions: {},
-                table: DatabaseTable.USERS,
-                retrievalFormat: format,
-                type: QueryType.INSERT,
-                isParameterized: false,
-                data: [ { user_status_id, metadata } ]
-            });
-    
-            if (!createUserResult.success)
-                return context.c.json({ message: createUserResult.message }, createUserResult.code);
-    
-            return context.c.json({
-                message: `${createUserResult.data.rowCount} ${createUserResult.data.rowCount === 1 ? "entry" : "entrys"} created`,
-                data: createUserResult.data.rows
-            }, 200);
+        const createUserResult = await DatabaseManager.query<IUser>({
+            conditions: {},
+            table: DatabaseTable.USERS,
+            retrievalFormat: format,
+            type: QueryType.INSERT,
+            isParameterized: false,
+            data: [ { user_status_id, metadata } ]
         });
+
+        if (!createUserResult.success)
+            return context.c.json({ message: createUserResult.message }, createUserResult.code);
+
+        return context.c.json({
+            message: `${createUserResult.data.rowCount} ${createUserResult.data.rowCount === 1 ? "entry" : "entrys"} created`,
+            data: createUserResult.data.rows
+        }, 200);
+});

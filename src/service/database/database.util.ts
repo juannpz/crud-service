@@ -1,4 +1,4 @@
-import { ColumnConstraints } from "./database.definition.ts";
+import { ColumnConstraints, ForeignKeyConstraint } from "./database.definition.ts";
 
 export function addReturningToQuery(query: string) {
     if (!query.includes("RETURNING"))
@@ -7,10 +7,18 @@ export function addReturningToQuery(query: string) {
     return query;
 }
 
-export function applyColumnConstraints(query: string, constraints: Record<string, ColumnConstraints>): string {
+export function applyColumnConstraints<
+    SourceColumn extends string = string,
+    TargetTable extends string = string,
+    TargetColumn extends string = string
+>(
+    query: string,
+    constraints: Partial<Record<SourceColumn, ColumnConstraints>>,
+    foreignKeys?: Partial<Record<SourceColumn, ForeignKeyConstraint<TargetTable, TargetColumn>>>
+): string {
     let modifiedQuery = query;
 
-    for (const [columnName, columnConstraints] of Object.entries(constraints)) {
+    for (const [columnName, columnConstraints] of Object.entries(constraints) as [SourceColumn, ColumnConstraints][]) {
         const pattern = new RegExp(`"${columnName}"\\s+([^,)]+?)(?=,|\\)|$)`);
 
         modifiedQuery = modifiedQuery.replace(pattern, (match) => {
@@ -29,10 +37,32 @@ export function applyColumnConstraints(query: string, constraints: Record<string
         });
     }
 
+    if (foreignKeys && Object.keys(foreignKeys).length > 0) {
+        const lastParenIndex = modifiedQuery.lastIndexOf(')');
+
+        if (lastParenIndex !== -1) {
+            const foreignKeysConstraints = (Object.entries(foreignKeys) as [SourceColumn, ForeignKeyConstraint<TargetTable, TargetColumn>][])
+                .map(([columnName, fkInfo]) => {
+                    let constraint = `,\n  CONSTRAINT "fk_${columnName}" FOREIGN KEY ("${columnName}") `;
+                    constraint += `REFERENCES ${fkInfo.table}("${fkInfo.column}")`;
+
+                    if (fkInfo.onDelete)
+                        constraint += ` ON DELETE ${fkInfo.onDelete}`;
+
+                    if (fkInfo.onUpdate)
+                        constraint += ` ON UPDATE ${fkInfo.onUpdate}`;
+
+                    return constraint;
+                }).join('');
+
+            modifiedQuery = modifiedQuery.slice(0, lastParenIndex) + foreignKeysConstraints + modifiedQuery.slice(lastParenIndex);
+        }
+    }
+
     return modifiedQuery;
 }
 
-export function stringifyObjectsInIterable(data: Record<string, unknown>[] | Iterable<Record<string, unknown>>): Record<string, unknown>[] {
+export function stringifyObjectsInIterable(data: Iterable<Record<string, unknown>>): Record<string, unknown>[] {
     const items = Array.isArray(data) ? data : Array.from(data);
 
     return items.map(item => {
@@ -51,7 +81,7 @@ export function stringifyObjectsInIterable(data: Record<string, unknown>[] | Ite
     });
 }
 
-export function removeNullAndUndefinedFromIterable(data: Record<string, unknown>[] | Iterable<Record<string, unknown>>): Record<string, unknown>[] {
+export function removeNullAndUndefinedFromIterable(data: Iterable<Record<string, unknown>>): Record<string, unknown>[] {
     const items = Array.isArray(data) ? data : Array.from(data);
 
     return items.map(item => {
@@ -64,4 +94,30 @@ export function removeNullAndUndefinedFromIterable(data: Record<string, unknown>
 
         return cleanItem;
     });
+}
+
+export function stringifyObjectsInObject(data: Record<string, unknown>): Record<string, unknown> {
+    const stringifiedObject: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(data)) {
+        const isObject = value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date);
+
+        if (isObject)
+            stringifiedObject[key] = JSON.stringify(value);
+        else
+            stringifiedObject[key] = value;
+    }
+
+    return stringifiedObject;
+}
+
+export function removeNullAndUndefinedFromObject(data: Record<string, unknown>): Record<string, unknown> {
+    const cleanObject: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(data)) {
+        if (value !== null && value !== undefined)
+            cleanObject[key] = value;
+    }
+
+    return cleanObject;
 }

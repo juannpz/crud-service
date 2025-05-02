@@ -11,5 +11,6 @@ export function init() {
     initManager(config);
 
     addRequest(server)
-    .start();
+    
+    server.start();
 }

@@ -2,15 +2,15 @@ import { CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCrede
 import { CREATE_USER_STATUS_TABLE_QUERY } from "./userStatus/userStatus.definition.ts";
 import { CREATE_USER_TABLE_QUERY } from "./users/users.definition.ts";
 import { IDatabaseConfig } from "../service.definition.ts";
-import { Client } from "@db/postgres";
+import { Pool, PoolClient } from "@db/postgres";
 
 export class DatabaseClient {
-    protected static client: Client | null = null;
+    protected static pool: Pool | null = null;
     
     protected constructor() { }
 
     public static async init(config: IDatabaseConfig) {
-        this.client = new Client({
+        this.pool = new Pool({
             database: config.DB_NAME,
             hostname: config.DB_HOST,
             port: config.DB_PORT,
@@ -20,39 +20,35 @@ export class DatabaseClient {
             tls: {
                 enabled: false
             }
-        });
+        }, 10);
 
-        await this.client.connect();
-
-        await this.generateTables();
+        const client = await this.pool.connect();
+        try {
+            await this.generateTables(client);
+        } finally {
+            client.release();
+        }
     }
 
-    private static async generateTables() {
+    protected static async disconnect() {
+        if (!this.pool)
+            throw new Error("Postgres pool not initialized");
+
+        await this.pool.end();
+    }
+
+    protected static async getClient() {
+        if (!this.pool)
+            throw new Error("Postgres pool not initialized");
+
+        return await this.pool.connect();
+    }
+
+    private static async generateTables(client: PoolClient) {
         await Promise.all([
-            this.createUsersTable(),
-            this.createUserCredentialsTable(),
-            this.createUserStatusTable()
+            client.queryObject(CREATE_USER_TABLE_QUERY),
+            client.queryObject(CREATE_USER_CREDENTIALS_TABLE_QUERY),
+            client.queryObject(CREATE_USER_STATUS_TABLE_QUERY)
         ]);
-    }
-
-    private static async createUsersTable() {
-        if (!this.client)
-            throw new Error("Postgres client not initialized");
-
-        return await this.client.queryObject(CREATE_USER_TABLE_QUERY);
-    }
-
-    private static async createUserCredentialsTable() {
-        if (!this.client)
-            throw new Error("Postgres client not initialized");
-
-        return await this.client.queryObject(CREATE_USER_CREDENTIALS_TABLE_QUERY);
-    }
-
-    private static async createUserStatusTable() {
-        if (!this.client)
-            throw new Error("Postgres client not initialized");
-
-        return await this.client.queryObject(CREATE_USER_STATUS_TABLE_QUERY);
     }
 }

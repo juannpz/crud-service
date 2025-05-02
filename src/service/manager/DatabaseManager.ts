@@ -1,8 +1,8 @@
-import { addReturningToQuery, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable } from "../database/database.util.ts";
-import { IBuildQueryResult, QueryConfig, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
-import { selectData, selectTsquery, insertInto, insertIntoData } from "@nodef/extra-sql";
+import { addReturningToQuery, removeNullAndUndefinedFromIterable, removeNullAndUndefinedFromObject, stringifyObjectsInIterable, stringifyObjectsInObject } from "../database/database.util.ts";
+import { IBuildQueryResult, QueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
+import { selectData, selectTsquery, insertInto, insertIntoData, updateData } from "@nodef/extra-sql";
+import { PoolClient, QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
-import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { DatabaseClient } from "../database/DatabaseClient.ts";
 
 export class DatabaseManager extends DatabaseClient{
@@ -11,47 +11,37 @@ export class DatabaseManager extends DatabaseClient{
         super();
     }
 
-    public static async disconnect(): Promise<GenericResponse<true>> {
+    public static async query<T>(options: QueryOptions): Promise<GenericResponse<Required<QueryResult<T>>>> {
+        const client = await this.getClient();
+
         try {
-            if (this.client)
-                await this.client.end();
-
-            return buildResponse({ success: true, data: true });
-
-        } catch (error) {
-            return buildResponse({ success: false, error });
-        }
-    }
-
-    public static async query<T>(config: QueryConfig): Promise<GenericResponse<Required<QueryResult<T>>>> {
-        try {
-            switch (config.retrievalFormat) {
+            switch (options.retrievalFormat) {
                 case RetrievalFormat.ARRAY:
-                    return await this.queryArray<T[]>(config);
+                    return await this.queryArray<T[]>(options, client);
 
                 case RetrievalFormat.OBJECT:
-                    return await this.queryObject<T>(config);
+                    return await this.queryObject<T>(options, client);
             
                 default:
-                    return buildResponse({ success: false, message: `Inavalid retrieval format: ${config.retrievalFormat}` });
+                    return buildResponse({ success: false, message: `Inavalid retrieval format: ${options.retrievalFormat}` });
             }
 
         } catch (error) {
             return buildResponse({ success: false, error });
+
+        } finally {
+            client.release();
         }
     }
 
-    private static async queryObject<T>(config: QueryConfig): Promise<GenericResponse<Required<QueryObjectResult<T>>>> {
-        if (!this.client)
-            return buildResponse({ success: false, message: "Postgres client not initialized" });
-
+    private static async queryObject<T>(options: QueryOptions, client: PoolClient): Promise<GenericResponse<Required<QueryObjectResult<T>>>> {
         try {
-            const buildQueryResult = this.buildQuery(config);
+            const buildQueryResult = this.buildQuery(options);
 
             if (!buildQueryResult.success)
                 return buildQueryResult;
 
-            const queryResult = await this.client.queryObject<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
+            const queryResult = await client.queryObject<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
 
             return buildResponse({ success: true, data: queryResult as Required<QueryObjectResult<T>> });
 
@@ -60,17 +50,14 @@ export class DatabaseManager extends DatabaseClient{
         }
     }
 
-    public static async queryArray<T extends unknown[]>(config: QueryConfig): Promise<GenericResponse<Required<QueryArrayResult<T>>>> {
-        if (!this.client)
-            return buildResponse({ success: false, message: "Postgres client not initialized" });
-
+    private static async queryArray<T extends unknown[]>(options: QueryOptions, client: PoolClient): Promise<GenericResponse<Required<QueryArrayResult<T>>>> {
         try {
-            const buildQueryResult = this.buildQuery(config);
+            const buildQueryResult = this.buildQuery(options);
 
             if (!buildQueryResult.success)
                 return buildQueryResult;
 
-            const queryResult = await this.client.queryArray<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
+            const queryResult = await client.queryArray<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
 
             return buildResponse({ success: true, data: queryResult as Required<QueryArrayResult<T>> });
 
@@ -79,17 +66,17 @@ export class DatabaseManager extends DatabaseClient{
         }
     }
 
-    private static buildQuery(config: QueryConfig): GenericResponse<IBuildQueryResult> {
+    private static buildQuery(options: QueryOptions): GenericResponse<IBuildQueryResult> {
         let queryString: string | undefined = undefined;
         let queryData: unknown[] | undefined = undefined;
 
-        switch (config.type) {
+        switch (options.type) {
             case QueryType.SELECT:
-                if (config.isTextSearch) {
-                    queryString = selectTsquery(config.table, config.text, config.operator, config.options);
+                if (options.isTextSearch) {
+                    queryString = selectTsquery(options.table, options.text, options.operator, options.options);
 
                 } else {
-                    const { query, data } = selectData(config.table, config.conditions, config.operator, config.separator);
+                    const { query, data } = selectData(options.table, options.conditions, options.operator, options.separator);
 
                     queryString = query;
                     queryData = data;
@@ -98,22 +85,31 @@ export class DatabaseManager extends DatabaseClient{
                 break;
             
             case QueryType.INSERT:
-                if (config.isParameterized) {
-                    const { query, data } = insertIntoData(config.table, this.formatQueryData(config.data));
+                if (options.isParameterized) {
+                    const { query, data } = insertIntoData(options.table, this.formatIterableQueryData(options.data));
 
                     queryString = query;
                     queryData = data;
                     
                 } else {
-                    queryString = insertInto(config.table, this.formatQueryData(config.data));
+                    queryString = insertInto(options.table, this.formatIterableQueryData(options.data));
                 }
 
                 queryString = addReturningToQuery(queryString);
 
                 break;
+
+            case QueryType.UPDATE: {
+                const { query, data } = updateData(options.table, options.conditions, this.formatObjectQueryData(options.data));
+
+                queryString = addReturningToQuery(query);;
+                queryData = data;
+
+                break;
+            }
         
             default:
-                return buildResponse({ success: false, message: "Missing query type in query config" });
+                return buildResponse({ success: false, message: "Missing query type in query options" });
         }
 
         if (!queryString)
@@ -122,7 +118,11 @@ export class DatabaseManager extends DatabaseClient{
         return buildResponse({ success: true, data: { queryString, queryData } });
     }
 
-    private static formatQueryData(data: Record<string, unknown>[] | Iterable<Record<string, unknown>>) {
+    private static formatIterableQueryData(data: Iterable<Record<string, unknown>>) {
         return stringifyObjectsInIterable(removeNullAndUndefinedFromIterable(data));
+    }
+
+    private static formatObjectQueryData(data: Record<string, unknown>) {
+        return stringifyObjectsInObject(removeNullAndUndefinedFromObject(data));
     }
 }

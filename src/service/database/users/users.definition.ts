@@ -18,7 +18,7 @@ interface IUserTable extends Record<string, PostgresDataType> {
     updated_at: PostgresDataType.TIMESTAMPTZ;
 }
 
-enum UserColumn {
+export enum UserColumn {
     USER_ID = "user_id",
     USER_STATUS_ID = "user_status_id",
     METADATA = "metadata",

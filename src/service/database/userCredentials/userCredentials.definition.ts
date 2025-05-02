@@ -1,5 +1,6 @@
 import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database.definition.ts";
 import { applyColumnConstraints } from "../database.util.ts";
+import { UserColumn } from "../users/users.definition.ts";
 import { createTable } from "@nodef/extra-sql";
 
 export interface IUserCredentials {
@@ -54,17 +55,29 @@ const userCredentialsTable: IUserCredentialsTable = {
     updated_at: PostgresDataType.TIMESTAMPTZ
 }
 
-export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints(
+export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
+    UserCredentialsColumn,
+    DatabaseTable,
+    UserColumn
+>(
     createTable(DatabaseTable.USER_CREDENTIALS, userCredentialsTable, { pk: UserCredentialsColumn.IDENTITY_ID }),
-    { 
-        [UserCredentialsColumn.CREATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
-        [UserCredentialsColumn.UPDATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
-        [UserCredentialsColumn.USER_ID]: { notNull: true, unique: true },
-        [UserCredentialsColumn.EMAIL]: { notNull: true, unique: true },
-        [UserCredentialsColumn.PASSWORD]: { notNull: true },
-        [UserCredentialsColumn.PHONE_NUMBER]: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
-        [UserCredentialsColumn.FIRST_NAME]: { notNull: true },
-        [UserCredentialsColumn.LAST_NAME]: { notNull: true },
-        [UserCredentialsColumn.METADATA]: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
+    {
+        created_at: { notNull: true, default: ColumnDefaultValue.NOW },
+        updated_at: { notNull: true, default: ColumnDefaultValue.NOW },
+        user_id: { notNull: true, unique: true },
+        email: { notNull: true, unique: true },
+        password: { notNull: true },
+        phone_number: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
+        first_name: { notNull: true },
+        last_name: { notNull: true },
+        metadata: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
+    },
+    {
+        user_id: {
+            table: DatabaseTable.USERS,
+            column: UserColumn.USER_ID,
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
+        }
     }
 );
