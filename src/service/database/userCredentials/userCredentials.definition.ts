@@ -1,10 +1,9 @@
 import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database.definition.ts";
-import { createTable } from "@nodef/extra-sql";
 import { applyColumnConstraints } from "../database.util.ts";
+import { createTable } from "@nodef/extra-sql";
 
 export interface IUserCredentials<M = Record<string, unknown>, P = Record<string, unknown>> {
-    identity_id: number
-    description: string
+    identity_id: number;
     user_id: number;
     email: string;
     first_name: string;
@@ -18,7 +17,6 @@ export interface IUserCredentials<M = Record<string, unknown>, P = Record<string
 
 interface IUserCredentialsTable extends Record<string, PostgresDataType> {
     identity_id: PostgresDataType.SERIAL;
-    description: PostgresDataType.TEXT;
     user_id: PostgresDataType.INTEGER;
     email: PostgresDataType.TEXT;
     first_name: PostgresDataType.TEXT;
@@ -32,7 +30,6 @@ interface IUserCredentialsTable extends Record<string, PostgresDataType> {
 
 enum UserCredentialsColumn {
     IDENTITY_ID = "identity_id",
-    DESCRIPTION = "description",
     USER_ID = "user_id",
     EMAIL = "email",
     FIRST_NAME = "first_name",
@@ -46,7 +43,6 @@ enum UserCredentialsColumn {
 
 const userCredentialsTable: IUserCredentialsTable = {
     identity_id: PostgresDataType.SERIAL,
-    description: PostgresDataType.TEXT,
     user_id: PostgresDataType.INTEGER,
     email: PostgresDataType.TEXT,
     first_name: PostgresDataType.TEXT,
@@ -63,7 +59,6 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints(
     { 
         [UserCredentialsColumn.CREATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
         [UserCredentialsColumn.UPDATED_AT]: { notNull: true, default: ColumnDefaultValue.NOW },
-        [UserCredentialsColumn.DESCRIPTION]: { notNull: true },
         [UserCredentialsColumn.USER_ID]: { notNull: true, unique: true },
         [UserCredentialsColumn.EMAIL]: { notNull: true, unique: true },
         [UserCredentialsColumn.PASSWORD]: { notNull: true },

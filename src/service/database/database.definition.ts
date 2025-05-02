@@ -1,5 +1,5 @@
-import { SelectTsqueryOptions } from "@nodef/extra-sql";
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
+import { SelectTsqueryOptions } from "@nodef/extra-sql";
 
 interface IQueryConfig {
     type: QueryType;
@@ -57,7 +57,8 @@ export enum ColumnDefaultValue {
     FALSE = "FALSE",
     ZERO = "0",
     EMPTY_STRING = "''",
-    EMPTY_JSONB = "'{}'"
+    EMPTY_JSONB = "'{}'",
+    ONE = "1"
 }
 
 export interface ColumnConstraints {

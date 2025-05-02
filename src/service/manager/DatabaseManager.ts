@@ -2,8 +2,8 @@ import { IBuildQueryResult, QueryConfig, QueryResult, QueryType, RetrievalFormat
 import { selectData, selectTsquery, insertInto, insertIntoData } from "@nodef/extra-sql";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
+import { addReturningToQuery, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable } from "../database/database.util.ts";
 import { DatabaseClient } from "../database/DatabaseClient.ts";
-import { addReturningToQuery } from "../database/database.util.ts";
 
 export class DatabaseManager extends DatabaseClient{
 
@@ -99,13 +99,13 @@ export class DatabaseManager extends DatabaseClient{
             
             case QueryType.INSERT:
                 if (config.isParameterized) {
-                    const { query, data } = insertIntoData(config.table, config.data);
+                    const { query, data } = insertIntoData(config.table, this.formatQueryData(config.data));
 
                     queryString = query;
                     queryData = data;
                     
                 } else {
-                    queryString = insertInto(config.table, config.data);
+                    queryString = insertInto(config.table, this.formatQueryData(config.data));
                 }
 
                 queryString = addReturningToQuery(queryString);
@@ -120,5 +120,11 @@ export class DatabaseManager extends DatabaseClient{
             return buildResponse({ success: false, message: "Could not build query" });
 
         return buildResponse({ success: true, data: { queryString, queryData } });
+    }
+
+    private static formatQueryData(data: Record<string, unknown>[] | Iterable<Record<string, unknown>>) {
+        const dataWithoutNullAndUndefined = removeNullAndUndefinedFromIterable(data);
+
+        return stringifyObjectsInIterable(dataWithoutNullAndUndefined);
     }
 }

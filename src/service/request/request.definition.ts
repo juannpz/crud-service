@@ -1,7 +1,7 @@
 import { ContextVariables, ServerBuilder } from "@juannpz/deno-service-tools";
-import { createUserRequest } from "./v1/users/createUser.request.ts";
-import { basicAuthMiddleware } from "../middleware/middleware.ts";
 import { RetrievalFormat } from "../database/database.definition.ts";
+import { postUserRequest } from "./v1/users/postUser.request.ts";
+import { basicAuthMiddleware } from "../middleware/middleware.ts";
 import { getUserRequest } from "./v1/users/getUser.request.ts";
 
 export interface IContextVariables extends ContextVariables {
@@ -12,7 +12,7 @@ export function addRequest(server: ServerBuilder<IContextVariables>) {
     addUserRequest(server);
 }
 
-const userRequest = [getUserRequest, createUserRequest];
+const userRequest = [getUserRequest, postUserRequest];
 
 function addUserRequest(server: ServerBuilder<IContextVariables>) {
     server.group("/v1/crud", (app) => {

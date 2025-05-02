@@ -1,6 +1,6 @@
-import { buildAuthHeaders } from "./src/service/request/request.util.ts";
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
 import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
+import { buildAuthHeaders } from "./src/service/request/request.util.ts";
 
 JWTManager.init("test");
 

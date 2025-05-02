@@ -1,5 +1,5 @@
-import { Context } from "jsr:@hono/hono@4.7.8";
 import { IContextVariables } from "./request.definition.ts";
+import { Context } from "jsr:@hono/hono@4.7.8";
 
 export function buildAuthHeaders(token: string) {
     return { Authorization: `Bearer ${token}` };

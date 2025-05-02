@@ -6,17 +6,18 @@ import { getContextVariables } from "../../request.util.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
 interface IBody extends Record<string, unknown> {
+    user_status_id: number;
     metadata: Record<string, unknown>;
 }
 
-export const createUserRequest = Router.post<IContextVariables>("/users")
+export const postUserRequest = Router.post<IContextVariables>("/users")
     .describe("User creation")
     .body<IBody>()
     .queryParam("format", { required: true })
     .headerParam("Authorization")
     .withVariables<IContextVariables>()
     .handler(async (context) => {
-            const metadata = JSON.stringify(context.body.metadata);
+            const { user_status_id, metadata } = context.body;
 
             const { format } = getContextVariables(context.c);
 
@@ -26,7 +27,7 @@ export const createUserRequest = Router.post<IContextVariables>("/users")
                 retrievalFormat: format,
                 type: QueryType.INSERT,
                 isParameterized: false,
-                data: [ { metadata } ]
+                data: [ { user_status_id, metadata } ]
             });
     
             if (!createUserResult.success)
