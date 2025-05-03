@@ -1,4 +1,4 @@
-import { DatabaseTable, QueryType, RetrievalFormat } from "../../../database/database.definition.ts";
+import { DatabaseTable, QuerySeparator, QueryType, RetrievalFormat } from "../../../database/database.definition.ts";
 import { IUserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { IContextVariables } from "../../request.definition.ts";
@@ -20,19 +20,23 @@ export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-cr
 .validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
+.queryParam<"identity_id", number>("identity_id", { transform: (value) => parseInt(value as string) })
 .headerParam("Authorization")
 .withVariables<IContextVariables>()
 .handler(async (context) => {
         const { email, first_name, last_name, password, phone_number, metadata } = context.body;
-
         const userId = context.params.user_id || context.query.user_id;
+        const { format, identity_id } = context.query;
 
-        const { format } = context.query;
+        if (!userId && !identity_id)
+            return context.c.json({ message: "User ID or identity ID is required" }, 400);
 
         const updateUserCredentialsResult = await DatabaseManager.query<IUserCredentials>({
             conditions: {
-                user_id: userId
+                user_id: userId,
+                identity_id
             },
+            separator: QuerySeparator.OR,
             table: DatabaseTable.USER_CREDENTIALS,
             retrievalFormat: format,
             type: QueryType.UPDATE,

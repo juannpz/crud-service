@@ -27,7 +27,7 @@ async function getUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
-        fetch(`http://localhost:3000/v1/crud/user?format=object&user_id=1`, {
+        fetch(`http://localhost:3000/v1/crud/user?format=object&user_status_id=1`, {
             headers: configHeaders
         })
     );
@@ -172,9 +172,9 @@ async function updateUserCredentialsRequest() {
         console.error(`Error: ${response.message}`);
 }
 
-// getUserRequest();
+getUserRequest();
 // createUserRequest();
 // getUserCredentialsRequest();
-createUserCredentialsRequest();
+// createUserCredentialsRequest();
 // updateUserRequest();
 // updateUserCredentialsRequest();

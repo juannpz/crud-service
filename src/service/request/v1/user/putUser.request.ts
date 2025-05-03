@@ -20,10 +20,11 @@ export const putUserRequest = Router.put<IContextVariables>("/user/:user_id?")
 .withVariables<IContextVariables>()
 .handler(async (context) => {
         const { user_status_id, metadata } = context.body;
-
         const userId = context.params.user_id || context.query.user_id;
-
         const { format } = context.query;
+
+        if (!userId)
+            return context.c.json({ message: "User ID is required" }, 400);
 
         const updateUserResult = await DatabaseManager.query<IUser>({
             conditions: {

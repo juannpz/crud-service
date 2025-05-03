@@ -18,7 +18,6 @@ export const postUserRequest = Router.post<IContextVariables>("/user")
 .withVariables<IContextVariables>()
 .handler(async (context) => {
         const { user_status_id, metadata } = context.body;
-
         const { format } = context.query;
 
         const createUserResult = await DatabaseManager.query<IUser>({

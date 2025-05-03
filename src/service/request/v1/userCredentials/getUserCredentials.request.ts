@@ -10,18 +10,21 @@ export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-cr
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"identity_id", number>("identity_id", { transform: (value) => parseInt(value as string) })
+.queryParam<"email", string>("email", { transform: (value) => (value as string).toLowerCase().trim() })
 .headerParam("Authorization")
 .withVariables<IContextVariables>()
 .handler(async (context) => {
-    const { format } = context.query;
-
+    const { format, identity_id, email } = context.query;
     const userId = context.params.user_id || context.query.user_id;
-    const identityId = context.query.identity_id;
+
+    if (!userId && !identity_id && !email)
+        return context.c.json({ message: "At least one query condition is required" }, 400);
 
     const getUserCredentialsResult = await DatabaseManager.query<IUserCredentials>({
         conditions: {
             user_id: userId,
-            identity_id: identityId
+            identity_id,
+            email
         },
         separator: QuerySeparator.OR,
         table: DatabaseTable.USER_CREDENTIALS,
