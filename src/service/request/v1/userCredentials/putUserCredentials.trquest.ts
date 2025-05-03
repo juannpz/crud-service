@@ -17,6 +17,7 @@ export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-cr
 .describe("User credentials update")
 .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .body<IBody>()
+.validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .headerParam("Authorization")
@@ -49,3 +50,10 @@ export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-cr
             data: updateUserCredentialsResult.data.rows
         }, 200);
 });
+
+function validateBody(body: IBody) {
+    if (Object.entries(body).length === 0)
+        return false;
+
+    return true;
+}

@@ -17,7 +17,7 @@ interface IBody extends Record<string, unknown> {
 export const postUserCredentialsRequest = Router.post<IContextVariables>("/user-credentials")
 .describe("User credentials update")
 .body<IBody>()
-.validateBody<IBody>(validateBody)
+.validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .headerParam("Authorization")
 .withVariables<IContextVariables>()
@@ -48,7 +48,7 @@ export const postUserCredentialsRequest = Router.post<IContextVariables>("/user-
 });
 
 function validateBody(body: IBody) {
-    if (!body.user_id || !body.email || !body.first_name || !body.last_name || !body.password || !body.phone_number || body.metadata)
+    if (!body.user_id || !body.email || !body.first_name || !body.last_name || !body.password || !body.phone_number || !body.metadata)
         return false;
     
     return true;

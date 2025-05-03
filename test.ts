@@ -1,7 +1,6 @@
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
 import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
 import { buildAuthHeaders } from "./src/service/request/request.util.ts";
-import { putUserRequest } from "./src/service/request/v1/user/putUser.request.ts";
 
 JWTManager.init("test");
 
@@ -64,7 +63,7 @@ async function createUserRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/crud/users?format=object`, {
+        fetch(`http://localhost:3000/v1/crud/user?format=object`, {
             headers: {
                 ...configHeaders,
                 "Content-Type": "application/json"
@@ -72,8 +71,9 @@ async function createUserRequest() {
             method: "POST",
             body: JSON.stringify({
                 metadata: {
-                    name: "test"
-                }
+                    name: "user"
+                },
+                user_status_id: 1
             })
         })
     );
@@ -101,8 +101,8 @@ async function createUserCredentialsRequest() {
                 metadata: {
                     name: "user1"
                 },
-                user_id: 1,
-                email: "user1@user1.com",
+                user_id: 3,
+                email: "user3@user3.com",
                 first_name: "user1",
                 last_name: "user1",
                 password: "user1",
@@ -175,6 +175,6 @@ async function updateUserCredentialsRequest() {
 // getUserRequest();
 // createUserRequest();
 // getUserCredentialsRequest();
-// createUserCredentialsRequest();
+createUserCredentialsRequest();
 // updateUserRequest();
-updateUserCredentialsRequest();
+// updateUserCredentialsRequest();

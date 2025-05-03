@@ -13,6 +13,7 @@ export const putUserRequest = Router.put<IContextVariables>("/user/:user_id?")
 .describe("User update")
 .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .body<IBody>()
+.validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .headerParam("Authorization")
@@ -45,3 +46,10 @@ export const putUserRequest = Router.put<IContextVariables>("/user/:user_id?")
             data: updateUserResult.data.rows
         }, 200);
 });
+
+function validateBody(body: IBody) {
+    if(Object.entries(body).length === 0)
+        return false;
+
+    return true;
+}
