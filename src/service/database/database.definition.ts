@@ -1,5 +1,5 @@
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
-import { SelectTsqueryOptions } from "@nodef/extra-sql";
+import { SelectTsqueryOptions } from "@juannpz/extra-sql";
 
 interface IQueryOptions {
     type: QueryType;

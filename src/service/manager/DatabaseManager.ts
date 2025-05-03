@@ -1,8 +1,8 @@
-import { addReturningToQuery, removeNullAndUndefinedFromIterable, removeNullAndUndefinedFromObject, stringifyObjectsInIterable, stringifyObjectsInObject } from "../database/database.util.ts";
+import { selectData, selectTsquery, insertInto, insertIntoData, updateData, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable, stringifyObjectsInObject, removeNullAndUndefinedFromObject } from "@juannpz/extra-sql";
 import { IBuildQueryResult, QueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
-import { selectData, selectTsquery, insertInto, insertIntoData, updateData } from "@nodef/extra-sql";
 import { PoolClient, QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
+import { addReturningToQuery } from "../database/database.util.ts"; 
 import { DatabaseClient } from "../database/DatabaseClient.ts";
 
 export class DatabaseManager extends DatabaseClient{

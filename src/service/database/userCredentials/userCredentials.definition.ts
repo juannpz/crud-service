@@ -1,7 +1,6 @@
 import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database.definition.ts";
-import { applyColumnConstraints } from "../database.util.ts";
+import { applyColumnConstraints, createTable } from "@juannpz/extra-sql";
 import { UserColumn } from "../users/users.definition.ts";
-import { createTable } from "@nodef/extra-sql";
 
 export interface IUserCredentials {
     identity_id: number;
