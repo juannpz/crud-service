@@ -2,13 +2,17 @@ import { selectData, selectTsquery, insertInto, insertIntoData, updateData, remo
 import { IBuildQueryResult, QueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
 import { PoolClient, QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
-import { addReturningToQuery } from "../database/database.util.ts"; 
 import { DatabaseClient } from "../database/DatabaseClient.ts";
+import { IDatabaseConfig } from "../service.definition.ts";
 
 export class DatabaseManager extends DatabaseClient{
 
     private constructor() {
         super();
+    }
+
+    public static init(config: IDatabaseConfig) {
+        this._init(config);
     }
 
     public static async query<T>(options: QueryOptions): Promise<GenericResponse<Required<QueryResult<T>>>> {
@@ -86,23 +90,21 @@ export class DatabaseManager extends DatabaseClient{
             
             case QueryType.INSERT:
                 if (options.isParameterized) {
-                    const { query, data } = insertIntoData(options.table, this.formatIterableQueryData(options.data));
+                    const { query, data } = insertIntoData(options.table, this.formatIterableQueryData(options.data), { returning: true });
 
                     queryString = query;
                     queryData = data;
                     
                 } else {
-                    queryString = insertInto(options.table, this.formatIterableQueryData(options.data));
+                    queryString = insertInto(options.table, this.formatIterableQueryData(options.data), { returning: true });
                 }
-
-                queryString = addReturningToQuery(queryString);
 
                 break;
 
             case QueryType.UPDATE: {
-                const { query, data } = updateData(options.table, { ...this.formatObjectQueryData(options.data), updated_at: new Date() }, options.conditions, options.operator, options.separator );
+                const { query, data } = updateData(options.table, { ...this.formatObjectQueryData(options.data), updated_at: new Date() }, options.conditions, options.operator, options.separator, { returning: true });
 
-                queryString = addReturningToQuery(query);;
+                queryString = query;
                 queryData = data;
                 
                 break;

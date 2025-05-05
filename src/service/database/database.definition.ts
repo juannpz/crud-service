@@ -137,3 +137,5 @@ export enum PostgresDataType {
     UUID = "UUID",
     ARRAY = "ARRAY"
 }
+
+export const NOTIFICATION_CHANNEL = "table_changes";

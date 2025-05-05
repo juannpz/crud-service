@@ -1,5 +1,5 @@
-import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database.definition.ts";
-import { applyColumnConstraints, createTable } from "@juannpz/extra-sql";
+import { ColumnDefaultValue, DatabaseTable, NOTIFICATION_CHANNEL, PostgresDataType } from "../database.definition.ts";
+import { applyColumnConstraints, createFunctionAndTrigger, createTable } from "@juannpz/extra-sql";
 import { UserColumn } from "../users/users.definition.ts";
 
 export interface IUserCredentials {
@@ -77,6 +77,52 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
             column: UserColumn.USER_ID,
             onDelete: "CASCADE",
             onUpdate: "CASCADE"
+        }
+    }
+);
+
+export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTrigger<
+    UserCredentialsColumn,
+    DatabaseTable,
+    DatabaseTable,
+    UserColumn,
+    UserCredentialsColumn,
+    UserColumn | UserCredentialsColumn
+>(
+    'notify_user_credentials_change',
+    {
+        // Columnas para rastrear valores nuevos
+        trackNewValues: {
+            last_name: true,
+            metadata: true,
+        },
+        // Columnas para rastrear valores anteriores
+        trackOldValues: {
+            email: true,
+            metadata: true
+        },
+        // Unir con tabla users
+        joinTables: {
+            users: {
+                joinColumn: UserColumn.USER_ID,
+                sourceColumn: UserCredentialsColumn.USER_ID,
+                selectColumns: {
+                    user_status_id: true
+                }
+            }
+        },
+        // Canal de notificación
+        channelName: NOTIFICATION_CHANNEL,
+        // Definición del trigger
+        triggers: {
+            'user_credentials_change_trigger': {
+                tableName: DatabaseTable.USER_CREDENTIALS,
+                timing: 'AFTER',
+                events: {
+                    'UPDATE': true
+                },
+                forEach: "ROW"
+            }
         }
     }
 );

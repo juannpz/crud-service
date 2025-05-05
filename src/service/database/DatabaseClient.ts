@@ -1,4 +1,4 @@
-import { CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCredentials.definition.ts";
+import { CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER, CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCredentials.definition.ts";
 import { CREATE_USER_STATUS_TABLE_QUERY } from "./userStatus/userStatus.definition.ts";
 import { CREATE_USER_TABLE_QUERY } from "./users/users.definition.ts";
 import { IDatabaseConfig } from "../service.definition.ts";
@@ -9,7 +9,7 @@ export class DatabaseClient {
     
     protected constructor() { }
 
-    public static async init(config: IDatabaseConfig) {
+    protected static async _init(config: IDatabaseConfig) {
         this.pool = new Pool({
             database: config.DB_NAME,
             hostname: config.DB_HOST,
@@ -22,12 +22,14 @@ export class DatabaseClient {
             }
         }, 10);
 
-        const client = await this.pool.connect();
+        const poolClient = await this.pool.connect();
         
         try {
-            await this.generateTables(client);
+            await this.generateTables(poolClient);
+            await this.generateNotificationTriggers(poolClient);
+
         } finally {
-            client.release();
+            poolClient.release();
         }
     }
 
@@ -50,6 +52,12 @@ export class DatabaseClient {
             client.queryObject(CREATE_USER_TABLE_QUERY),
             client.queryObject(CREATE_USER_CREDENTIALS_TABLE_QUERY),
             client.queryObject(CREATE_USER_STATUS_TABLE_QUERY)
+        ]);
+    }
+
+    private static async generateNotificationTriggers(client: PoolClient) {
+        await Promise.all([
+            client.queryObject(CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER)
         ]);
     }
 }

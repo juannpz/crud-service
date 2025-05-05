@@ -6,7 +6,7 @@ export function getConfig() {
         authConfig: getAuthConfig(),
         serviceUrls: getServiceUrls(),
         dbConfig: getDatabaseConfig()
-    }
+    };
 
     return checkEnv(config);
 }

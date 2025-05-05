@@ -154,14 +154,17 @@ async function updateUserCredentialsRequest() {
         return;
 
     const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/crud/user-credentials/1?format=object`, {
+        fetch(`http://localhost:3000/v1/crud/user-credentials/2?format=object`, {
             headers: {
                 ...configHeaders,
                 "Content-Type": "application/json"
             },
             method: "PUT",
             body: JSON.stringify({
-                last_name: "newname"
+                last_name: "kafka",
+                metadata: {
+                    name: "kafka"
+                }
             })
         })
     );
@@ -172,9 +175,9 @@ async function updateUserCredentialsRequest() {
         console.error(`Error: ${response.message}`);
 }
 
-getUserRequest();
+// getUserRequest();
 // createUserRequest();
 // getUserCredentialsRequest();
 // createUserCredentialsRequest();
 // updateUserRequest();
-// updateUserCredentialsRequest();
+updateUserCredentialsRequest();
