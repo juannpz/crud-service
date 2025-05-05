@@ -77,7 +77,8 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
             column: UserColumn.USER_ID,
             onDelete: "CASCADE",
             onUpdate: "CASCADE"
-        }
+        },
+
     }
 );
 
@@ -91,17 +92,22 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
 >(
     'notify_user_credentials_change',
     {
-        // Columnas para rastrear valores nuevos
         trackNewValues: {
+            user_id: true,
+            phone_number: true,
+            email: true,
+            first_name: true,
             last_name: true,
             metadata: true,
         },
-        // Columnas para rastrear valores anteriores
         trackOldValues: {
+            user_id: true,
+            phone_number: true,
             email: true,
-            metadata: true
+            first_name: true,
+            last_name: true,
+            metadata: true,
         },
-        // Unir con tabla users
         joinTables: {
             users: {
                 joinColumn: UserColumn.USER_ID,
@@ -111,9 +117,7 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
                 }
             }
         },
-        // Canal de notificación
         channelName: NOTIFICATION_CHANNEL,
-        // Definición del trigger
         triggers: {
             'user_credentials_change_trigger': {
                 tableName: DatabaseTable.USER_CREDENTIALS,
@@ -121,7 +125,7 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
                 events: {
                     'UPDATE': true
                 },
-                forEach: "ROW"
+                forEach: "ROW",
             }
         }
     }

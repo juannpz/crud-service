@@ -163,7 +163,7 @@ async function updateUserCredentialsRequest() {
             body: JSON.stringify({
                 last_name: "kafka",
                 metadata: {
-                    name: "kafka"
+                    name: "kafkaaaaaaaaaaaaaaaaaa"
                 }
             })
         })
