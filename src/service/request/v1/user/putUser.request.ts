@@ -36,15 +36,15 @@ export const putUserRequest = Router.put<IContextVariables>("/user/:user_id?")
             data: { user_status_id, metadata }
         });
 
-    if (!updateUserResult.success) {
+    if (!updateUserResult.ok) {
         console.error(updateUserResult.message);
 
-        return context.c.json({ message: updateUserResult.message }, updateUserResult.code);
+        return context.c.json({ message: updateUserResult.message });
     }
 
         return context.c.json({
-            message: `${updateUserResult.data.rowCount} ${updateUserResult.data.rowCount === 1 ? "entry" : "entrys"} updated`,
-            data: updateUserResult.data.rows
+            message: `${updateUserResult.value.rowCount} ${updateUserResult.value.rowCount === 1 ? "entry" : "entrys"} updated`,
+            data: updateUserResult.value.rows
         }, 200);
 });
 

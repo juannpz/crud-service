@@ -12,7 +12,7 @@ export async function basicAuthMiddleware(c: Context, next: () => Promise<void |
 
     const verificationResult = await JWTManager.verify<IJWTPayload>(token, keyGenerationConfig);
 
-    if (!verificationResult.success) {
+    if (!verificationResult.ok) {
         console.error(verificationResult.message);
 
         return c.json({ message: verificationResult.message }, 401);

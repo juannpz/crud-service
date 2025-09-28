@@ -1,5 +1,5 @@
 import { postUserCredentialsRequest } from "./v1/userCredentials/postUserCredentials.request.ts";
-import { putUserCredentialsRequest } from "./v1/userCredentials/putUserCredentials.trquest.ts";
+import { putUserCredentialsRequest } from "./v1/userCredentials/putUserCredentials.request.ts";
 import { getUserCredentialsRequest } from "./v1/userCredentials/getUserCredentials.request.ts";
 import { ContextVariables, ServerBuilder } from "@juannpz/deno-service-tools";
 import { basicAuthMiddleware } from "./middleware/middleware.ts";

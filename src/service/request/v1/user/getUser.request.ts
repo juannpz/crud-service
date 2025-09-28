@@ -32,14 +32,14 @@ export const getUserRequest = Router.get<IContextVariables>("/user/:user_id?")
         isTextSearch: false
     });
 
-    if (!getUserResult.success){
+    if (!getUserResult.ok){
         console.error(getUserResult.message);
 
-        return context.c.json({ message: getUserResult.message }, getUserResult.code);
+        return context.c.json({ message: getUserResult.message });
     }
 
     return context.c.json({
-        message: `Found ${getUserResult.data.rowCount} ${getUserResult.data.rowCount === 1 ? "entry" : "entrys"}`,
-        data: getUserResult.data.rows
+        message: `Found ${getUserResult.value.rowCount} ${getUserResult.value.rowCount === 1 ? "entry" : "entrys"}`,
+        data: getUserResult.value.rows
     }, 200);
 });

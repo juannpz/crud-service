@@ -43,15 +43,15 @@ export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-cr
             data: { email, first_name, last_name, password, phone_number, metadata }
         });
 
-    if (!updateUserCredentialsResult.success) {
+    if (!updateUserCredentialsResult.ok) {
         console.error(updateUserCredentialsResult.message);
 
-        return context.c.json({ message: updateUserCredentialsResult.message }, updateUserCredentialsResult.code);
+        return context.c.json({ message: updateUserCredentialsResult.message });
     }
 
         return context.c.json({
-            message: `${updateUserCredentialsResult.data.rowCount} ${updateUserCredentialsResult.data.rowCount === 1 ? "entry" : "entrys"} updated`,
-            data: updateUserCredentialsResult.data.rows
+            message: `${updateUserCredentialsResult.value.rowCount} ${updateUserCredentialsResult.value.rowCount === 1 ? "entry" : "entrys"} updated`,
+            data: updateUserCredentialsResult.value.rows
         }, 200);
 });
 

@@ -1,8 +1,8 @@
 import { selectData, selectTsquery, insertInto, insertIntoData, updateData, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable, stringifyObjectsInObject, removeNullAndUndefinedFromObject } from "@juannpz/extra-sql";
 import { IBuildQueryResult, QueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
 import { PoolClient, QueryArrayResult, QueryObjectResult } from "@db/postgres";
-import { buildResponse, GenericResponse } from "@juannpz/deno-service-tools";
 import { DatabaseClient } from "../database/DatabaseClient.ts";
+import { Result, ResUtil } from "@juannpz/deno-service-tools";
 import { IDatabaseConfig } from "../service.definition.ts";
 
 export class DatabaseManager extends DatabaseClient{
@@ -15,7 +15,7 @@ export class DatabaseManager extends DatabaseClient{
         this._init(config);
     }
 
-    public static async query<T>(options: QueryOptions): Promise<GenericResponse<Required<QueryResult<T>>>> {
+    public static async query<T>(options: QueryOptions): Promise<Result<Required<QueryResult<T>>>> {
         const client = await this.getClient();
 
         try {
@@ -27,50 +27,50 @@ export class DatabaseManager extends DatabaseClient{
                     return await this.queryObject<T>(options, client);
             
                 default:
-                    return buildResponse({ success: false, message: `Inavalid retrieval format: ${options.retrievalFormat}` });
+                    return ResUtil.Fail(`Inavalid retrieval format: ${options.retrievalFormat}`)
             }
 
         } catch (error) {
-            return buildResponse({ success: false, error });
+            return ResUtil.Fail("Error executing query", error);
 
         } finally {
             client.release();
         }
     }
 
-    private static async queryObject<T>(options: QueryOptions, client: PoolClient): Promise<GenericResponse<Required<QueryObjectResult<T>>>> {
+    private static async queryObject<T>(options: QueryOptions, client: PoolClient): Promise<Result<Required<QueryObjectResult<T>>>> {
         try {
             const buildQueryResult = this.buildQuery(options);
 
-            if (!buildQueryResult.success)
+            if (!buildQueryResult.ok)
                 return buildQueryResult;
 
-            const queryResult = await client.queryObject<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
+            const queryResult = await client.queryObject<T>(buildQueryResult.value.queryString, buildQueryResult.value.queryData);
 
-            return buildResponse({ success: true, data: queryResult as Required<QueryObjectResult<T>> });
+            return ResUtil.Succeed(queryResult as Required<QueryObjectResult<T>>)
 
         } catch (error) {
-            return buildResponse({ success: false, error });
+            return ResUtil.Fail("Error executing query", error);
         }
     }
 
-    private static async queryArray<T extends unknown[]>(options: QueryOptions, client: PoolClient): Promise<GenericResponse<Required<QueryArrayResult<T>>>> {
+    private static async queryArray<T extends unknown[]>(options: QueryOptions, client: PoolClient): Promise<Result<Required<QueryArrayResult<T>>>> {
         try {
             const buildQueryResult = this.buildQuery(options);
 
-            if (!buildQueryResult.success)
+            if (!buildQueryResult.ok)
                 return buildQueryResult;
 
-            const queryResult = await client.queryArray<T>(buildQueryResult.data.queryString, buildQueryResult.data.queryData);
+            const queryResult = await client.queryArray<T>(buildQueryResult.value.queryString, buildQueryResult.value.queryData);
 
-            return buildResponse({ success: true, data: queryResult as Required<QueryArrayResult<T>> });
+            return ResUtil.Succeed(queryResult as Required<QueryArrayResult<T>>)
 
         } catch (error) {
-            return buildResponse({ success: false, error });
+            return ResUtil.Fail("Error executing query", error);
         }
     }
 
-    private static buildQuery(options: QueryOptions): GenericResponse<IBuildQueryResult> {
+    private static buildQuery(options: QueryOptions): Result<IBuildQueryResult> {
         let queryString: string | undefined = undefined;
         let queryData: unknown[] | undefined = undefined;
 
@@ -111,13 +111,13 @@ export class DatabaseManager extends DatabaseClient{
             }
         
             default:
-                return buildResponse({ success: false, message: "Missing query type in query options" });
+                return ResUtil.Fail("Missing query type in query options");
         }
 
         if (!queryString)
-            return buildResponse({ success: false, message: "Could not build query" });
+            return ResUtil.Fail("Error building query. Missing query string");
 
-        return buildResponse({ success: true, data: { queryString, queryData } });
+        return ResUtil.Succeed({ queryString, queryData });
     }
 
     private static formatIterableQueryData(data: Iterable<Record<string, unknown>>) {

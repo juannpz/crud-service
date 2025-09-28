@@ -29,15 +29,15 @@ export const postUserRequest = Router.post<IContextVariables>("/user")
             data: [ { user_status_id, metadata } ]
         });
 
-    if (!createUserResult.success) {
+    if (!createUserResult.ok) {
         console.error(createUserResult.message);
 
-        return context.c.json({ message: createUserResult.message }, createUserResult.code);
+        return context.c.json({ message: createUserResult.message });
     }
 
         return context.c.json({
-            message: `${createUserResult.data.rowCount} ${createUserResult.data.rowCount === 1 ? "entry" : "entrys"} created`,
-            data: createUserResult.data.rows
+            message: `${createUserResult.value.rowCount} ${createUserResult.value.rowCount === 1 ? "entry" : "entrys"} created`,
+            data: createUserResult.value.rows
         }, 200);
 });
 

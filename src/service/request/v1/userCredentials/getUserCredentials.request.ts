@@ -1,8 +1,8 @@
 import { QueryType, DatabaseTable, RetrievalFormat, QuerySeparator } from "../../../database/database.definition.ts";
 import { IUserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
+import { buildRequestResponse, Router } from "@juannpz/deno-service-tools";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { IContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
 
 export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-credentials/:user_id?")
 .describe("User credentials retrieval")
@@ -33,14 +33,14 @@ export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-cr
         isTextSearch: false
     });
 
-    if (!getUserCredentialsResult.success) {
+    if (!getUserCredentialsResult.ok) {
         console.error(getUserCredentialsResult.message);
 
-        return context.c.json({ message: getUserCredentialsResult.message }, getUserCredentialsResult.code);
+        return context.c.json(buildRequestResponse(getUserCredentialsResult), 400);
     }
 
     return context.c.json({
-        message: `Found ${getUserCredentialsResult.data.rowCount} ${getUserCredentialsResult.data.rowCount === 1 ? "entry" : "entrys"}`,
-        data: getUserCredentialsResult.data.rows
+		queryMessage: `Found ${getUserCredentialsResult.value.rowCount} ${getUserCredentialsResult.value.rowCount === 1 ? "entry" : "entrys"}`,
+        ...buildRequestResponse(getUserCredentialsResult)
     }, 200);
 });

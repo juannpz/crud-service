@@ -1,5 +1,5 @@
 import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
-import { Header, JWTManager, createResponseFromFetch } from "@juannpz/deno-service-tools";
+import { Header, JWTManager, safeFetch } from "@juannpz/deno-service-tools";
 import { buildAuthHeaders } from "./src/service/request/request.util.ts";
 
 JWTManager.init("test");
@@ -11,13 +11,13 @@ const JWTConfigHeaders: Header = {
 async function buildConfig() {
     const generateJwtResult = await JWTManager.generate<IJWTPayload>(JWTConfigHeaders, JWTPayload, keyGenerationConfig);
 
-    if (!generateJwtResult.success) {
+    if (!generateJwtResult.ok) {
         console.error(generateJwtResult.message);
 
         return;
     }
 
-    return buildAuthHeaders(generateJwtResult.data);
+    return buildAuthHeaders(generateJwtResult.value);
 }
 
 async function getUserRequest() {
@@ -26,14 +26,14 @@ async function getUserRequest() {
     if (!configHeaders)
         return;
 
-    const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
+    const response = await safeFetch<{ message: string, data: Record<string, unknown>[] }>(
         fetch(`http://localhost:3000/v1/crud/user?format=object&user_status_id=1`, {
             headers: configHeaders
         })
     );
 
-    if (response.success)
-        console.log("Response:", response.data);
+    if (response.ok)
+        console.log(response.value);
     else 
         console.error(`Error: ${response.message}`);
 }
@@ -44,14 +44,14 @@ async function getUserCredentialsRequest() {
     if (!configHeaders)
         return;
 
-    const response = await createResponseFromFetch<{ message: string, data: Record<string, unknown>[] }>(
+    const response = await safeFetch<{ message: string, data: Record<string, unknown>[] }>(
         fetch(`http://localhost:3000/v1/crud/user-credentials?format=object&user_id=1`, {
             headers: configHeaders
         })
     );
 
-    if (response.success)
-        console.log("Response:", response.data);
+    if (response.ok)
+        console.log(response.value);
     else
         console.error(`Error: ${response.message}`);
 }
@@ -62,7 +62,7 @@ async function createUserRequest() {
     if (!configHeaders)
         return;
 
-    const response = await createResponseFromFetch<{ message: string, userId: number }>(
+    const response = await safeFetch<{ message: string, userId: number }>(
         fetch(`http://localhost:3000/v1/crud/user?format=object`, {
             headers: {
                 ...configHeaders,
@@ -78,8 +78,8 @@ async function createUserRequest() {
         })
     );
 
-    if (response.success)
-        console.log("Response:", response.data);
+    if (response.ok)
+        console.log(response.value);
     else
         console.error(`Error: ${response.message}`);
 }
@@ -90,7 +90,7 @@ async function createUserCredentialsRequest() {
     if (!configHeaders)
         return;
 
-    const response = await createResponseFromFetch<{ message: string, userId: number }>(
+    const response = await safeFetch<{ message: string, userId: number }>(
         fetch(`http://localhost:3000/v1/crud/user-credentials?format=object`, {
             headers: {
                 ...configHeaders,
@@ -101,7 +101,7 @@ async function createUserCredentialsRequest() {
                 metadata: {
                     name: "user1"
                 },
-                user_id: 3,
+                user_id: 1,
                 email: "user3@user3.com",
                 first_name: "user1",
                 last_name: "user1",
@@ -114,8 +114,8 @@ async function createUserCredentialsRequest() {
         })
     );
 
-    if (response.success)
-        console.log("Response:", response.data);
+    if (response.ok)
+        console.log(response.value);
     else
         console.error(`Error: ${response.message}`);
 }
@@ -126,7 +126,7 @@ async function updateUserRequest() {
     if (!configHeaders)
         return;
 
-    const response = await createResponseFromFetch<{ message: string, userId: number }>(
+    const response = await safeFetch<{ message: string, userId: number }>(
         fetch(`http://localhost:3000/v1/crud/user/1?format=object`, {
             headers: {
                 ...configHeaders,
@@ -141,8 +141,8 @@ async function updateUserRequest() {
         })
     );
 
-    if (response.success)
-        console.log("Response:", response.data);
+    if (response.ok)
+        console.log(response.value);
     else
         console.error(`Error: ${response.message}`);
 }
@@ -153,8 +153,8 @@ async function updateUserCredentialsRequest() {
     if (!configHeaders)
         return;
 
-    const response = await createResponseFromFetch<{ message: string, userId: number }>(
-        fetch(`http://localhost:3000/v1/crud/user-credentials/2?format=object`, {
+    const response = await safeFetch<{ message: string, userId: number }>(
+        fetch(`http://localhost:3000/v1/crud/user-credentials/1?format=object`, {
             headers: {
                 ...configHeaders,
                 "Content-Type": "application/json"
@@ -163,14 +163,14 @@ async function updateUserCredentialsRequest() {
             body: JSON.stringify({
                 last_name: "kafka",
                 metadata: {
-                    name: "kafkaaaaaaaaaaaaaaaaaa"
+                    name: "ahora no"
                 }
             })
         })
     );
 
-    if (response.success)
-        console.log("Response:", response.data);
+    if (response.ok)
+        console.log(response.value);
     else
         console.error(`Error: ${response.message}`);
 }

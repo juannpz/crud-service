@@ -35,15 +35,15 @@ export const postUserCredentialsRequest = Router.post<IContextVariables>("/user-
         data: [ { user_id, email, first_name, last_name, password, phone_number, metadata } ]
     });
 
-    if (!createUserCredentialsResult.success) {
+    if (!createUserCredentialsResult.ok) {
         console.error(createUserCredentialsResult.message);
 
-        return context.c.json({ message: createUserCredentialsResult.message }, createUserCredentialsResult.code);
+        return context.c.json({ message: createUserCredentialsResult.message });
     }
 
     return context.c.json({
-        message: `${createUserCredentialsResult.data.rowCount} ${createUserCredentialsResult.data.rowCount === 1 ? "entry" : "entrys"} created`,
-        data: createUserCredentialsResult.data.rows
+        message: `${createUserCredentialsResult.value.rowCount} ${createUserCredentialsResult.value.rowCount === 1 ? "entry" : "entrys"} created`,
+        data: createUserCredentialsResult.value.rows
     }, 200);
 });
 
