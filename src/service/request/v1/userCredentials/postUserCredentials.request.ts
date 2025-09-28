@@ -1,7 +1,7 @@
 import { DatabaseTable, QueryType, RetrievalFormat } from "../../../database/database.definition.ts";
-import { IUserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
+import { UserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IContextVariables } from "../../request.definition.ts";
+import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
 interface IBody extends Record<string, unknown> {
@@ -14,19 +14,19 @@ interface IBody extends Record<string, unknown> {
     metadata: Record<string, unknown>;
 }
 
-export const postUserCredentialsRequest = Router.post<IContextVariables>("/user-credentials")
+export const postUserCredentialsRequest = Router.post<ExtendedContextVariables>("/user-credentials")
 .describe("User credentials update")
 .body<IBody>()
 .validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .headerParam("Authorization")
-.withVariables<IContextVariables>()
+.withVariables<ExtendedContextVariables>()
 .handler(async (context) => {
     const { metadata, email, first_name, last_name, password, phone_number, user_id } = context.body;
 
     const { format } = context.query;
 
-    const createUserCredentialsResult = await DatabaseManager.query<IUserCredentials>({
+    const createUserCredentialsResult = await DatabaseManager.query<UserCredentials>({
         conditions: {},
         table: DatabaseTable.USER_CREDENTIALS,
         retrievalFormat: format,

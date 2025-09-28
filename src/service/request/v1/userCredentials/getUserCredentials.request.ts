@@ -1,10 +1,10 @@
 import { QueryType, DatabaseTable, RetrievalFormat, QuerySeparator } from "../../../database/database.definition.ts";
-import { IUserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
+import { UserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { buildRequestResponse, Router } from "@juannpz/deno-service-tools";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IContextVariables } from "../../request.definition.ts";
+import { ExtendedContextVariables } from "../../request.definition.ts";
 
-export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-credentials/:user_id?")
+export const getUserCredentialsRequest = Router.get<ExtendedContextVariables>("/user-credentials/:user_id?")
 .describe("User credentials retrieval")
 .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"format", RetrievalFormat>("format", { required: true })
@@ -12,7 +12,7 @@ export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-cr
 .queryParam<"identity_id", number>("identity_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"email", string>("email", { transform: (value) => (value as string).toLowerCase().trim() })
 .headerParam("Authorization")
-.withVariables<IContextVariables>()
+.withVariables<ExtendedContextVariables>()
 .handler(async (context) => {
     const { format, identity_id, email } = context.query;
     const userId = context.params.user_id || context.query.user_id;
@@ -20,7 +20,7 @@ export const getUserCredentialsRequest = Router.get<IContextVariables>("/user-cr
     if (!userId && !identity_id && !email)
         return context.c.json({ message: "At least one query condition is required" }, 400);
 
-    const getUserCredentialsResult = await DatabaseManager.query<IUserCredentials>({
+    const getUserCredentialsResult = await DatabaseManager.query<UserCredentials>({
         conditions: {
             user_id: userId,
             identity_id,

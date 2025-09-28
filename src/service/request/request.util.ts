@@ -1,4 +1,4 @@
-import { IContextVariables } from "./request.definition.ts";
+import { ExtendedContextVariables } from "./request.definition.ts";
 import { Context } from "@juannpz/deno-service-tools";
 
 export function buildAuthHeaders(token: string) {
@@ -9,6 +9,6 @@ export function reBuildAuthHeaders(req: Request) {
     return { Authorization: req.headers.get("Authorization") };
 }
 
-export function getContextVariables(context: Context<{ Variables: IContextVariables }>): IContextVariables {
+export function getContextVariables(context: Context<{ Variables: ExtendedContextVariables }>): ExtendedContextVariables {
    return context.var;
 }

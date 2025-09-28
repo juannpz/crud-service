@@ -1,9 +1,9 @@
-import { addRequest, IContextVariables } from "./request/request.definition.ts";
+import { addRequest, ExtendedContextVariables } from "./request/request.definition.ts";
 import { createServer } from "@juannpz/deno-service-tools";
 import { initManager } from "./manager/init.ts";
 import { getConfig } from "./service.config.ts";
 
-const server = createServer<IContextVariables>();
+const server = createServer<ExtendedContextVariables>();
 
 export function init() {
     const config = getConfig();

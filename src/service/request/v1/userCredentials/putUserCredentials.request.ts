@@ -1,7 +1,7 @@
 import { DatabaseTable, QuerySeparator, QueryType, RetrievalFormat } from "../../../database/database.definition.ts";
-import { IUserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
+import { UserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IContextVariables } from "../../request.definition.ts";
+import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
 interface IBody extends Record<string, unknown> {
@@ -13,7 +13,7 @@ interface IBody extends Record<string, unknown> {
     metadata: Record<string, unknown>;
 }
 
-export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-credentials/:user_id?")
+export const putUserCredentialsRequest = Router.put<ExtendedContextVariables>("/user-credentials/:user_id?")
 .describe("User credentials update")
 .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .body<IBody>()
@@ -22,7 +22,7 @@ export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-cr
 .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"identity_id", number>("identity_id", { transform: (value) => parseInt(value as string) })
 .headerParam("Authorization")
-.withVariables<IContextVariables>()
+.withVariables<ExtendedContextVariables>()
 .handler(async (context) => {
         const { email, first_name, last_name, password, phone_number, metadata } = context.body;
         const userId = context.params.user_id || context.query.user_id;
@@ -31,7 +31,7 @@ export const putUserCredentialsRequest = Router.put<IContextVariables>("/user-cr
         if (!userId && !identity_id)
             return context.c.json({ message: "User ID or identity ID is required" }, 400);
 
-        const updateUserCredentialsResult = await DatabaseManager.query<IUserCredentials>({
+        const updateUserCredentialsResult = await DatabaseManager.query<UserCredentials>({
             conditions: {
                 user_id: userId,
                 identity_id

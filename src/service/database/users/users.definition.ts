@@ -1,7 +1,7 @@
 import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database.definition.ts";
 import { applyColumnConstraints, createTable } from "@juannpz/extra-sql";
 
-export interface IUser {
+export interface User {
     user_id: number;
     user_status_id: number;
     metadata: Record<string, unknown>;
@@ -9,7 +9,7 @@ export interface IUser {
     updated_at: Date;
 }
 
-interface IUsersTable extends Record<string, PostgresDataType> {
+interface UsersTable extends Record<string, PostgresDataType> {
     user_id: PostgresDataType.SERIAL;
     user_status_id: PostgresDataType.INTEGER;
     metadata: PostgresDataType.JSONB;
@@ -25,7 +25,7 @@ export enum UserColumn {
     UPDATED_AT = "updated_at"
 }
 
-const usersTable: IUsersTable = {
+const usersTable: UsersTable = {
     user_id: PostgresDataType.SERIAL,
     user_status_id: PostgresDataType.INTEGER,
     metadata: PostgresDataType.JSONB,

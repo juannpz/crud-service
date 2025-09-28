@@ -1,7 +1,7 @@
 import { DatabaseTable, QueryType, RetrievalFormat } from "../../../database/database.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IUser } from "../../../database/users/users.definition.ts";
-import { IContextVariables } from "../../request.definition.ts";
+import { User } from "../../../database/users/users.definition.ts";
+import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
 interface IBody extends Record<string, unknown> {
@@ -9,18 +9,18 @@ interface IBody extends Record<string, unknown> {
     metadata: Record<string, unknown>;
 }
 
-export const postUserRequest = Router.post<IContextVariables>("/user")
+export const postUserRequest = Router.post<ExtendedContextVariables>("/user")
 .describe("User creation")
 .body<IBody>()
 .validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .headerParam("Authorization")
-.withVariables<IContextVariables>()
+.withVariables<ExtendedContextVariables>()
 .handler(async (context) => {
         const { user_status_id, metadata } = context.body;
         const { format } = context.query;
 
-        const createUserResult = await DatabaseManager.query<IUser>({
+        const createUserResult = await DatabaseManager.query<User>({
             conditions: {},
             table: DatabaseTable.USERS,
             retrievalFormat: format,

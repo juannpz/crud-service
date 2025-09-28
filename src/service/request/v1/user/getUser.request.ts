@@ -1,17 +1,17 @@
 import { QueryType, DatabaseTable, RetrievalFormat, QuerySeparator } from "../../../database/database.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
-import { IUser } from "../../../database/users/users.definition.ts";
-import { IContextVariables } from "../../request.definition.ts";
+import { User } from "../../../database/users/users.definition.ts";
+import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
-export const getUserRequest = Router.get<IContextVariables>("/user/:user_id?")
+export const getUserRequest = Router.get<ExtendedContextVariables>("/user/:user_id?")
 .describe("User retrieval")
 .pathParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .queryParam<"user_id", number>("user_id", { transform: (value) => parseInt(value as string) })
 .queryParam<"user_status_id", number>("user_status_id", { transform: (value) => parseInt(value as string) })
 .headerParam("Authorization")
-.withVariables<IContextVariables>()
+.withVariables<ExtendedContextVariables>()
 .handler(async (context) => {
     const { format } = context.query;
     const userId = context.params.user_id || context.query.user_id;
@@ -20,7 +20,7 @@ export const getUserRequest = Router.get<IContextVariables>("/user/:user_id?")
     if (!userId && !userStatusId)
         return context.c.json({ message: "At least one query condition is required" }, 400);
 
-    const getUserResult = await DatabaseManager.query<IUser>({
+    const getUserResult = await DatabaseManager.query<User>({
         conditions: {
             user_id: userId,
             user_status_id: context.query.user_status_id

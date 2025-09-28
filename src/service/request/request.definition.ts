@@ -7,9 +7,9 @@ import { postUserRequest } from "./v1/user/postUser.request.ts";
 import { getUserRequest } from "./v1/user/getUser.request.ts";
 import { putUserRequest } from "./v1/user/putUser.request.ts";
 
-export interface IContextVariables extends ContextVariables {}
+export interface ExtendedContextVariables extends ContextVariables {}
 
-export function addRequest(server: ServerBuilder<IContextVariables>) {
+export function addRequest(server: ServerBuilder<ExtendedContextVariables>) {
     addUserRequest(server);
     addUserCredentialsRequest(server);
 }
@@ -17,7 +17,7 @@ export function addRequest(server: ServerBuilder<IContextVariables>) {
 const userRequest = [getUserRequest, postUserRequest, putUserRequest];
 const userCredentialsRequest = [getUserCredentialsRequest, postUserCredentialsRequest, putUserCredentialsRequest];
 
-function addUserRequest(server: ServerBuilder<IContextVariables>) {
+function addUserRequest(server: ServerBuilder<ExtendedContextVariables>) {
     server.group("/v1/crud", (app) => {
         userRequest.forEach(request => {
             request.useMiddleware(basicAuthMiddleware)
@@ -26,7 +26,7 @@ function addUserRequest(server: ServerBuilder<IContextVariables>) {
     });
 }
 
-function addUserCredentialsRequest(server: ServerBuilder<IContextVariables>) {
+function addUserCredentialsRequest(server: ServerBuilder<ExtendedContextVariables>) {
     server.group("/v1/crud", (app) => {
         userCredentialsRequest.forEach(request => {
             request.useMiddleware(basicAuthMiddleware)

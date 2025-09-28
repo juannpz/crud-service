@@ -2,7 +2,7 @@ import { ColumnDefaultValue, DatabaseTable, NOTIFICATION_CHANNEL, PostgresDataTy
 import { applyColumnConstraints, createFunctionAndTrigger, createTable } from "@juannpz/extra-sql";
 import { UserColumn } from "../users/users.definition.ts";
 
-export interface IUserCredentials {
+export interface UserCredentials {
     identity_id: number;
     user_id: number;
     email: string;
@@ -15,7 +15,7 @@ export interface IUserCredentials {
     updated_at: Date;
 }
 
-interface IUserCredentialsTable extends Record<string, PostgresDataType> {
+interface UserCredentialsTable extends Record<string, PostgresDataType> {
     identity_id: PostgresDataType.SERIAL;
     user_id: PostgresDataType.INTEGER;
     email: PostgresDataType.TEXT;
@@ -41,7 +41,7 @@ enum UserCredentialsColumn {
     UPDATED_AT = "updated_at"
 }
 
-const userCredentialsTable: IUserCredentialsTable = {
+const userCredentialsTable: UserCredentialsTable = {
     identity_id: PostgresDataType.SERIAL,
     user_id: PostgresDataType.INTEGER,
     email: PostgresDataType.TEXT,
