@@ -90,7 +90,9 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
 >(
     'notify_user_credentials_change',
     {
+		topLevelIdentifier: UserCredentialsColumn.USER_ID,
         trackNewValues: {
+			user_id: true,
             phone_number: true,
             email: true,
             first_name: true,
