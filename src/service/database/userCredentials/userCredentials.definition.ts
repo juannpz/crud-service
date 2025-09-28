@@ -56,8 +56,8 @@ const userCredentialsTable: IUserCredentialsTable = {
 
 export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
     UserCredentialsColumn,
-    DatabaseTable,
-    UserColumn
+    DatabaseTable.USERS,
+    UserColumn.USER_ID
 >(
     createTable(DatabaseTable.USER_CREDENTIALS, userCredentialsTable, { pk: UserCredentialsColumn.IDENTITY_ID }),
     {
@@ -76,9 +76,7 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
             table: DatabaseTable.USERS,
             column: UserColumn.USER_ID,
             onDelete: "CASCADE",
-            onUpdate: "CASCADE"
         },
-
     }
 );
 
@@ -88,12 +86,11 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
     DatabaseTable,
     UserColumn,
     UserCredentialsColumn,
-    UserColumn | UserCredentialsColumn
+    UserColumn
 >(
     'notify_user_credentials_change',
     {
         trackNewValues: {
-            user_id: true,
             phone_number: true,
             email: true,
             first_name: true,
@@ -113,7 +110,7 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
                 joinColumn: UserColumn.USER_ID,
                 sourceColumn: UserCredentialsColumn.USER_ID,
                 selectColumns: {
-                    user_status_id: true
+                    user_status_id: true,
                 }
             }
         },
@@ -126,7 +123,7 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTri
                     'UPDATE': true
                 },
                 forEach: "ROW",
-            }
+            },
         }
     }
 );

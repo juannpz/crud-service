@@ -1,5 +1,5 @@
 import { IContextVariables } from "./request.definition.ts";
-import { Context } from "jsr:@hono/hono@4.7.8";
+import { Context } from "@juannpz/deno-service-tools";
 
 export function buildAuthHeaders(token: string) {
     return { Authorization: `Bearer ${token}` };
