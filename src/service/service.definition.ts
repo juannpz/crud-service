@@ -30,7 +30,7 @@ export interface AuthConfig {
 }
 
 export interface ServiceUrls {
-    BROKER_SERVICE_URL: string;
+    SESSION_SERVICE_URL: string;
 }
 
 export interface DatabaseConfig {

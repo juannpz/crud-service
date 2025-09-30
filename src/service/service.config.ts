@@ -19,7 +19,7 @@ function getAuthConfig(): AuthConfig {
 
 function getServiceUrls(): ServiceUrls {
     return {
-        BROKER_SERVICE_URL: Deno.env.get("BROKER_SERVICE_URL") ?? ""
+        SESSION_SERVICE_URL: Deno.env.get("SESSION_SERVICE_URL") ?? ""
     };
 }
 
