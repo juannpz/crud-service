@@ -1,10 +1,9 @@
-import { AuthConfig, DatabaseConfig, ServiceConfig, ServiceUrls } from "./service.definition.ts";
+import { AuthConfig, DatabaseConfig, ServiceConfig } from "./service.definition.ts";
 import { checkEnv } from "@juannpz/deno-service-tools";
 
 export function getConfig() {
     const config: ServiceConfig = {
         authConfig: getAuthConfig(),
-        serviceUrls: getServiceUrls(),
         dbConfig: getDatabaseConfig()
     };
 
@@ -14,12 +13,6 @@ export function getConfig() {
 function getAuthConfig(): AuthConfig {
     return {
         JWT_KEY: Deno.env.get("JWT_KEY") ?? ""
-    };
-}
-
-function getServiceUrls(): ServiceUrls {
-    return {
-        SESSION_SERVICE_URL: Deno.env.get("SESSION_SERVICE_URL") ?? ""
     };
 }
 

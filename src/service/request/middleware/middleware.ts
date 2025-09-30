@@ -1,4 +1,4 @@
-import { JWT_PAYLOAD, keyGenerationConfig } from "../../service.definition.ts";
+import { JWTPayload, keyGenerationConfig } from "../../service.definition.ts";
 import { Context, JWTManager } from "@juannpz/deno-service-tools";
 
 export async function basicAuthMiddleware(c: Context, next: () => Promise<void | Response>) {
@@ -10,7 +10,7 @@ export async function basicAuthMiddleware(c: Context, next: () => Promise<void |
     if (!token.startsWith("Bearer "))
         return c.json({ message: "Invalid auth token format" }, 401);
 
-    const verificationResult = await JWTManager.verify<JWT_PAYLOAD>(token, keyGenerationConfig);
+    const verificationResult = await JWTManager.verify<JWTPayload>(token, keyGenerationConfig);
 
     if (!verificationResult.ok) {
         console.error(verificationResult.message);

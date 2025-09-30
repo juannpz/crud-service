@@ -21,16 +21,11 @@ export const JWT_PAYLOAD: JWTPayload = {
 
 export interface ServiceConfig {
     authConfig: AuthConfig;
-    serviceUrls: ServiceUrls;
     dbConfig: DatabaseConfig;
 }
 
 export interface AuthConfig {
     JWT_KEY: string;
-}
-
-export interface ServiceUrls {
-    SESSION_SERVICE_URL: string;
 }
 
 export interface DatabaseConfig {
