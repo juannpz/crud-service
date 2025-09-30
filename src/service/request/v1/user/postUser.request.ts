@@ -4,14 +4,14 @@ import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
-interface IBody extends Record<string, unknown> {
+interface Body extends Record<string, unknown> {
     user_status_id: number;
     metadata: Record<string, unknown>;
 }
 
 export const postUserRequest = Router.post<ExtendedContextVariables>("/user")
 .describe("User creation")
-.body<IBody>()
+.body<Body>()
 .validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .headerParam("Authorization")
@@ -41,7 +41,7 @@ export const postUserRequest = Router.post<ExtendedContextVariables>("/user")
         }, 200);
 });
 
-function validateBody(body: IBody) {
+function validateBody(body: Body) {
     if (!body.user_status_id || !body.metadata)
         return false;
 

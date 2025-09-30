@@ -1,9 +1,9 @@
 import { selectData, selectTsquery, insertInto, insertIntoData, updateData, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable, stringifyObjectsInObject, removeNullAndUndefinedFromObject } from "@juannpz/extra-sql";
-import { IBuildQueryResult, QueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
+import { BuildQueryResult, ExtendedQueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
 import { PoolClient, QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { DatabaseClient } from "../database/DatabaseClient.ts";
 import { Result, ResUtil } from "@juannpz/deno-service-tools";
-import { IDatabaseConfig } from "../service.definition.ts";
+import { DatabaseConfig } from "../service.definition.ts";
 
 export class DatabaseManager extends DatabaseClient{
 
@@ -11,11 +11,11 @@ export class DatabaseManager extends DatabaseClient{
         super();
     }
 
-    public static init(config: IDatabaseConfig) {
+    public static init(config: DatabaseConfig) {
         this._init(config);
     }
 
-    public static async query<T>(options: QueryOptions): Promise<Result<Required<QueryResult<T>>>> {
+    public static async query<T>(options: ExtendedQueryOptions): Promise<Result<Required<QueryResult<T>>>> {
         const client = await this.getClient();
 
         try {
@@ -38,7 +38,7 @@ export class DatabaseManager extends DatabaseClient{
         }
     }
 
-    private static async queryObject<T>(options: QueryOptions, client: PoolClient): Promise<Result<Required<QueryObjectResult<T>>>> {
+    private static async queryObject<T>(options: ExtendedQueryOptions, client: PoolClient): Promise<Result<Required<QueryObjectResult<T>>>> {
         try {
             const buildQueryResult = this.buildQuery(options);
 
@@ -54,7 +54,7 @@ export class DatabaseManager extends DatabaseClient{
         }
     }
 
-    private static async queryArray<T extends unknown[]>(options: QueryOptions, client: PoolClient): Promise<Result<Required<QueryArrayResult<T>>>> {
+    private static async queryArray<T extends unknown[]>(options: ExtendedQueryOptions, client: PoolClient): Promise<Result<Required<QueryArrayResult<T>>>> {
         try {
             const buildQueryResult = this.buildQuery(options);
 
@@ -70,7 +70,7 @@ export class DatabaseManager extends DatabaseClient{
         }
     }
 
-    private static buildQuery(options: QueryOptions): Result<IBuildQueryResult> {
+    private static buildQuery(options: ExtendedQueryOptions): Result<BuildQueryResult> {
         let queryString: string | undefined = undefined;
         let queryData: unknown[] | undefined = undefined;
 

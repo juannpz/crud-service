@@ -1,7 +1,7 @@
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { SelectTsqueryOptions } from "@juannpz/extra-sql";
 
-interface IQueryOptions {
+interface QueryOptions {
     type: QueryType;
     table: DatabaseTable;
     conditions: Record<string, unknown>;
@@ -10,12 +10,12 @@ interface IQueryOptions {
     separator?: QuerySeparator;
 }
 
-export interface ISelectQueryOptions extends IQueryOptions {
+export interface SelectQueryOptions extends QueryOptions {
     type: QueryType.SELECT;
     isTextSearch: false;
 }
 
-export interface ITextSearchSelectQueryOptions extends IQueryOptions {
+export interface TextSearchSelectQueryOptions extends QueryOptions {
     type: QueryType.SELECT;
     isTextSearch: true;
     text: string;
@@ -23,28 +23,28 @@ export interface ITextSearchSelectQueryOptions extends IQueryOptions {
     options: SelectTsqueryOptions;
 }
 
-export interface IInsertQueryOptions extends IQueryOptions {
+export interface InsertQueryOptions extends QueryOptions {
     type: QueryType.INSERT;
     isParameterized: false;
     data: Iterable<Record<string, unknown>>;
 }
 
-export interface IParameterizedInsertQueryOptions extends IQueryOptions {
+export interface ParameterizedInsertQueryOptions extends QueryOptions {
     type: QueryType.INSERT;
     isParameterized: true;
     data: Record<string, unknown>[];
 }
 
-export interface IUpdatedQueryOptions extends IQueryOptions {
+export interface UpdatedQueryOptions extends QueryOptions {
     type: QueryType.UPDATE;
     data: Record<string, unknown>;
 }
 
-export type QueryOptions = ISelectQueryOptions | ITextSearchSelectQueryOptions | IInsertQueryOptions | IParameterizedInsertQueryOptions | IUpdatedQueryOptions;
+export type ExtendedQueryOptions = SelectQueryOptions | TextSearchSelectQueryOptions | InsertQueryOptions | ParameterizedInsertQueryOptions | UpdatedQueryOptions;
 
 export type QueryResult<T> = QueryObjectResult<T> | QueryArrayResult<T[]>;
 
-export interface IBuildQueryResult {
+export interface BuildQueryResult {
     queryString: string;
     queryData?: unknown[];
 }

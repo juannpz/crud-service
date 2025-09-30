@@ -1,4 +1,4 @@
-import { IJWTPayload, JWTPayload, keyGenerationConfig } from "./src/service/service.definition.ts";
+import { JWTPayload, JWT_PAYLOAD, keyGenerationConfig } from "./src/service/service.definition.ts";
 import { Header, JWTManager, safeFetch } from "@juannpz/deno-service-tools";
 import { buildAuthHeaders } from "./src/service/request/request.util.ts";
 
@@ -9,7 +9,7 @@ const JWTConfigHeaders: Header = {
 }
 
 async function buildConfig() {
-    const generateJwtResult = await JWTManager.generate<IJWTPayload>(JWTConfigHeaders, JWTPayload, keyGenerationConfig);
+    const generateJwtResult = await JWTManager.generate<JWTPayload>(JWTConfigHeaders, JWT_PAYLOAD, keyGenerationConfig);
 
     if (!generateJwtResult.ok) {
         console.error(generateJwtResult.message);

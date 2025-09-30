@@ -1,7 +1,7 @@
 import { CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER, CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCredentials.definition.ts";
 import { CREATE_USER_STATUS_TABLE_QUERY } from "./userStatus/userStatus.definition.ts";
 import { CREATE_USER_TABLE_QUERY } from "./users/users.definition.ts";
-import { IDatabaseConfig } from "../service.definition.ts";
+import { DatabaseConfig } from "../service.definition.ts";
 import { Pool, PoolClient } from "@db/postgres";
 
 export class DatabaseClient {
@@ -9,7 +9,7 @@ export class DatabaseClient {
     
     protected constructor() { }
 
-    protected static async _init(config: IDatabaseConfig) {
+    protected static async _init(config: DatabaseConfig) {
         this.pool = new Pool({
             database: config.DB_NAME,
             hostname: config.DB_HOST,

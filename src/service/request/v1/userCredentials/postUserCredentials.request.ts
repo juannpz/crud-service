@@ -4,7 +4,7 @@ import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
-interface IBody extends Record<string, unknown> {
+interface Body extends Record<string, unknown> {
     user_id: number;
     email: string;
     first_name: string;
@@ -16,7 +16,7 @@ interface IBody extends Record<string, unknown> {
 
 export const postUserCredentialsRequest = Router.post<ExtendedContextVariables>("/user-credentials")
 .describe("User credentials update")
-.body<IBody>()
+.body<Body>()
 .validateBody(validateBody)
 .queryParam<"format", RetrievalFormat>("format", { required: true })
 .headerParam("Authorization")
@@ -47,7 +47,7 @@ export const postUserCredentialsRequest = Router.post<ExtendedContextVariables>(
     }, 200);
 });
 
-function validateBody(body: IBody) {
+function validateBody(body: Body) {
     if (!body.user_id || !body.email || !body.first_name || !body.last_name || !body.password || !body.phone_number || !body.metadata)
         return false;
     

@@ -1,6 +1,6 @@
 import { getNumericDate, IGenerateKeyConfig, Payload } from "@juannpz/deno-service-tools";
 
-export interface IJWTPayload extends Payload {
+export interface JWTPayload extends Payload {
     userId: number;
 }
 
@@ -11,7 +11,7 @@ export const keyGenerationConfig: IGenerateKeyConfig = {
     keyUsages: ["sign", "verify"]
 };
 
-export const JWTPayload: IJWTPayload = {
+export const JWT_PAYLOAD: JWTPayload = {
     userId: 1,
     aud: "test",
     exp: getNumericDate(60 * 60),
@@ -19,21 +19,21 @@ export const JWTPayload: IJWTPayload = {
     sub: "test"
 };
 
-export interface IServiceConfig {
-    authConfig: IAuthConfig;
-    serviceUrls: IServiceUrls;
-    dbConfig: IDatabaseConfig;
+export interface ServiceConfig {
+    authConfig: AuthConfig;
+    serviceUrls: ServiceUrls;
+    dbConfig: DatabaseConfig;
 }
 
-export interface IAuthConfig {
+export interface AuthConfig {
     JWT_KEY: string;
 }
 
-export interface IServiceUrls {
+export interface ServiceUrls {
     BROKER_SERVICE_URL: string;
 }
 
-export interface IDatabaseConfig {
+export interface DatabaseConfig {
     DB_HOST: string;
     DB_PORT: number;
     DB_USER: string;
