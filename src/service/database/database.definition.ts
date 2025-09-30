@@ -1,7 +1,7 @@
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { SelectTsqueryOptions } from "@juannpz/extra-sql";
 
-interface QueryOptions {
+interface BaseQueryOptions {
     type: QueryType;
     table: DatabaseTable;
     conditions: Record<string, unknown>;
@@ -10,12 +10,12 @@ interface QueryOptions {
     separator?: QuerySeparator;
 }
 
-export interface SelectQueryOptions extends QueryOptions {
+export interface SelectQueryOptions extends BaseQueryOptions {
     type: QueryType.SELECT;
     isTextSearch: false;
 }
 
-export interface TextSearchSelectQueryOptions extends QueryOptions {
+export interface TextSearchSelectQueryOptions extends BaseQueryOptions {
     type: QueryType.SELECT;
     isTextSearch: true;
     text: string;
@@ -23,24 +23,24 @@ export interface TextSearchSelectQueryOptions extends QueryOptions {
     options: SelectTsqueryOptions;
 }
 
-export interface InsertQueryOptions extends QueryOptions {
+export interface InsertQueryOptions extends BaseQueryOptions {
     type: QueryType.INSERT;
     isParameterized: false;
     data: Iterable<Record<string, unknown>>;
 }
 
-export interface ParameterizedInsertQueryOptions extends QueryOptions {
+export interface ParameterizedInsertQueryOptions extends BaseQueryOptions {
     type: QueryType.INSERT;
     isParameterized: true;
     data: Record<string, unknown>[];
 }
 
-export interface UpdatedQueryOptions extends QueryOptions {
+export interface UpdatedQueryOptions extends BaseQueryOptions {
     type: QueryType.UPDATE;
     data: Record<string, unknown>;
 }
 
-export type ExtendedQueryOptions = SelectQueryOptions | TextSearchSelectQueryOptions | InsertQueryOptions | ParameterizedInsertQueryOptions | UpdatedQueryOptions;
+export type QueryOptions = SelectQueryOptions | TextSearchSelectQueryOptions | InsertQueryOptions | ParameterizedInsertQueryOptions | UpdatedQueryOptions;
 
 export type QueryResult<T> = QueryObjectResult<T> | QueryArrayResult<T[]>;
 
