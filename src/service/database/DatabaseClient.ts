@@ -1,4 +1,4 @@
-import { CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER, CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCredentials.definition.ts";
+import { CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY, CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCredentials.definition.ts";
 import { CREATE_USER_STATUS_TABLE_QUERY } from "./userStatus/userStatus.definition.ts";
 import { CREATE_USER_TABLE_QUERY } from "./users/users.definition.ts";
 import { DatabaseConfig } from "../service.definition.ts";
@@ -57,7 +57,7 @@ export class DatabaseClient {
 
     private static async generateNotificationTriggers(client: PoolClient) {
         await Promise.all([
-            client.queryObject(CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER)
+            client.queryObject(CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY)
         ]);
     }
 }

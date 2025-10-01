@@ -80,7 +80,7 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
     }
 );
 
-export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER = createFunctionAndTrigger<
+export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY = createFunctionAndTrigger<
     UserCredentialsColumn,
     DatabaseTable,
     DatabaseTable,
