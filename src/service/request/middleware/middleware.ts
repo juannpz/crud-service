@@ -1,11 +1,11 @@
 import { Context, safeFetch } from "@juannpz/deno-service-tools";
 
-export function buildBasicAuthMiddleware(sessionServiceUrl: string) {
+export function buildBasicAuthMiddleware(sessionService: string) {
 	return (
 		async function basicAuthMiddleware(c: Context, next: () => Promise<void | Response>) {
 			const jwt = c.req.header("Authorization");
 
-			console.log(sessionServiceUrl);
+			console.log(sessionService);
 			
 
 			if (!jwt)
@@ -15,7 +15,7 @@ export function buildBasicAuthMiddleware(sessionServiceUrl: string) {
 				return c.json({ message: "Invalid auth token format" }, 401);
 
 			const veryfySessionResult = await safeFetch(
-				fetch(`${sessionServiceUrl}/v1/session/verify`, {
+				fetch(`${sessionService}/v1/session/verify`, {
 					headers: {
 						"Content-Type": "application/json"
 					},
