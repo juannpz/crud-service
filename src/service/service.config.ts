@@ -1,10 +1,11 @@
-import { AuthConfig, DatabaseConfig, ServiceConfig } from "./service.definition.ts";
+import { AuthConfig, DatabaseConfig, ServiceConfig, ServicesEntrypoints } from "./service.definition.ts";
 import { checkEnv } from "@juannpz/deno-service-tools";
 
 export function getConfig() {
     const config: ServiceConfig = {
         authConfig: getAuthConfig(),
-        dbConfig: getDatabaseConfig()
+        dbConfig: getDatabaseConfig(),
+		servicesEntrypoints: getServicesEntrypoints()
     };
 
     return checkEnv(config);
@@ -24,4 +25,10 @@ function getDatabaseConfig(): DatabaseConfig {
         DB_PASSWORD: Deno.env.get("DB_PASSWORD") ?? "",
         DB_NAME: Deno.env.get("DB_NAME") ?? ""
     };
+}
+
+function getServicesEntrypoints(): ServicesEntrypoints {
+	return {
+		SESSION_SERVICE_URL: Deno.env.get("SESSION_SERVICE_URL") ?? ""
+	};
 }
