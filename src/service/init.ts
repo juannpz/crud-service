@@ -10,7 +10,7 @@ export function init() {
 
     initManager(config);
 
-    addRequest(server)
+    addRequest(server, config)
     
     server.start();
 }

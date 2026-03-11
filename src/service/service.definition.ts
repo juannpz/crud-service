@@ -22,6 +22,7 @@ export const JWT_PAYLOAD: JWTPayload = {
 export interface ServiceConfig {
     authConfig: AuthConfig;
     dbConfig: DatabaseConfig;
+	servicesEntrypoints: ServicesEntrypoints;
 }
 
 export interface AuthConfig {
@@ -34,4 +35,8 @@ export interface DatabaseConfig {
     DB_USER: string;
     DB_PASSWORD: string;
     DB_NAME: string;
+}
+
+export interface ServicesEntrypoints {
+	SESSION_SERVICE_URL: string;
 }
