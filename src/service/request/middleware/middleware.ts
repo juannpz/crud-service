@@ -18,7 +18,7 @@ export async function basicAuthMiddleware(c: Context, next: () => Promise<void |
         return c.json({ message: verificationResult.message }, 401);
     };
     
-    c.set("format", c.req.query("format"))
+    c.set("userId", 2)
 
     await next();
 }

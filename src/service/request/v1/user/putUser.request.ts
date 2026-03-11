@@ -2,7 +2,7 @@ import { DatabaseTable, QueryType, RetrievalFormat } from "../../../database/dat
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
+import { Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
     user_status_id: number;
@@ -48,9 +48,9 @@ export const putUserRequest = Router.put<ExtendedContextVariables>("/user/:user_
         }, 200);
 });
 
-function validateBody(body: Body) {
+function validateBody(body: Body): ValidationResult {
     if(Object.entries(body).length === 0)
-        return false;
+        return { valid: false, message: "Body is empty" };
 
-    return true;
+    return { valid: true };
 }

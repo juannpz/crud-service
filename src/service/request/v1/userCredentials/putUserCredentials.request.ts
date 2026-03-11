@@ -2,7 +2,7 @@ import { DatabaseTable, QuerySeparator, QueryType, RetrievalFormat } from "../..
 import { UserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
+import { Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
     email: string;
@@ -55,9 +55,9 @@ export const putUserCredentialsRequest = Router.put<ExtendedContextVariables>("/
         }, 200);
 });
 
-function validateBody(body: Body) {
+function validateBody(body: Body): ValidationResult {
     if (Object.entries(body).length === 0)
-        return false;
+        return { valid: false, message: "Body is empty"};
 
-    return true;
+    return { valid: true };
 }

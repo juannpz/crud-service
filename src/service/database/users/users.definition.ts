@@ -1,8 +1,8 @@
-import { ColumnDefaultValue, DatabaseTable, PostgresDataType } from "../database.definition.ts";
-import { applyColumnConstraints, createTable } from "@juannpz/extra-sql";
+import { applyColumnConstraints, createTable, ColumnDefaultValue } from "@juannpz/extra-sql";
+import { DatabaseTable, PostgresDataType } from "../database.definition.ts";
 
 export interface User {
-    user_id: number;
+    user_id: string;
     user_status_id: number;
     metadata: Record<string, unknown>;
     created_at: Date;
@@ -10,7 +10,7 @@ export interface User {
 }
 
 interface UsersTable extends Record<string, PostgresDataType> {
-    user_id: PostgresDataType.SERIAL;
+    user_id: PostgresDataType.UUID;
     user_status_id: PostgresDataType.INTEGER;
     metadata: PostgresDataType.JSONB;
     created_at: PostgresDataType.TIMESTAMPTZ;
@@ -26,7 +26,7 @@ export enum UserColumn {
 }
 
 const usersTable: UsersTable = {
-    user_id: PostgresDataType.SERIAL,
+    user_id: PostgresDataType.UUID,
     user_status_id: PostgresDataType.INTEGER,
     metadata: PostgresDataType.JSONB,
     created_at: PostgresDataType.TIMESTAMPTZ,
@@ -40,5 +40,6 @@ export const CREATE_USER_TABLE_QUERY = applyColumnConstraints<UserColumn>(
         metadata: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
         created_at: { notNull: true, default: ColumnDefaultValue.NOW },
         updated_at: { notNull: true, default: ColumnDefaultValue.NOW },
+		user_id: { notNull: true, unique: true, default: ColumnDefaultValue.UUID }
     }
 );

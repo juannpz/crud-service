@@ -17,6 +17,8 @@ export const getUserCredentialsRequest = Router.get<ExtendedContextVariables>("/
     const { format, identity_id, email } = context.query;
     const userId = context.params.user_id || context.query.user_id;
 
+	console.log(context.c.var.userId);
+
     if (!userId && !identity_id && !email)
         return context.c.json({ message: "At least one query condition is required" }, 400);
 

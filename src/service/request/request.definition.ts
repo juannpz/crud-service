@@ -2,20 +2,25 @@ import { postUserCredentialsRequest } from "./v1/userCredentials/postUserCredent
 import { putUserCredentialsRequest } from "./v1/userCredentials/putUserCredentials.request.ts";
 import { getUserCredentialsRequest } from "./v1/userCredentials/getUserCredentials.request.ts";
 import { ContextVariables, ServerBuilder } from "@juannpz/deno-service-tools";
+import { postUserStatusRequest } from "./v1/userStatus/postUserStatus.ts";
 import { basicAuthMiddleware } from "./middleware/middleware.ts";
 import { postUserRequest } from "./v1/user/postUser.request.ts";
 import { getUserRequest } from "./v1/user/getUser.request.ts";
 import { putUserRequest } from "./v1/user/putUser.request.ts";
 
-export interface ExtendedContextVariables extends ContextVariables {}
+export interface ExtendedContextVariables extends ContextVariables {
+	userId: number;
+}
 
 export function addRequest(server: ServerBuilder<ExtendedContextVariables>) {
     addUserRequest(server);
     addUserCredentialsRequest(server);
+	addUserStatusRequest(server);
 }
 
 const userRequest = [getUserRequest, postUserRequest, putUserRequest];
 const userCredentialsRequest = [getUserCredentialsRequest, postUserCredentialsRequest, putUserCredentialsRequest];
+const userStatusRequest = [postUserStatusRequest];
 
 function addUserRequest(server: ServerBuilder<ExtendedContextVariables>) {
     server.group("/v1/crud", (app) => {
@@ -29,6 +34,15 @@ function addUserRequest(server: ServerBuilder<ExtendedContextVariables>) {
 function addUserCredentialsRequest(server: ServerBuilder<ExtendedContextVariables>) {
     server.group("/v1/crud", (app) => {
         userCredentialsRequest.forEach(request => {
+            request.useMiddleware(basicAuthMiddleware)
+                .register(app);
+        });
+    });
+}
+
+function addUserStatusRequest(server: ServerBuilder<ExtendedContextVariables>) {
+	server.group("/v1/crud", (app) => {
+        userStatusRequest.forEach(request => {
             request.useMiddleware(basicAuthMiddleware)
                 .register(app);
         });

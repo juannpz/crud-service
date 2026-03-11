@@ -1,5 +1,5 @@
+import { ColumnDefaultValue, SelectTsqueryOptions } from "@juannpz/extra-sql";
 import { QueryArrayResult, QueryObjectResult } from "@db/postgres";
-import { SelectTsqueryOptions } from "@juannpz/extra-sql";
 
 interface BaseQueryOptions {
     type: QueryType;
@@ -47,18 +47,6 @@ export type QueryResult<T> = QueryObjectResult<T> | QueryArrayResult<T[]>;
 export interface BuildQueryResult {
     queryString: string;
     queryData?: unknown[];
-}
-
-export enum ColumnDefaultValue {
-    CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP",
-    NOW = "NOW()",
-    NULL = "NULL",
-    TRUE = "TRUE",
-    FALSE = "FALSE",
-    ZERO = "0",
-    EMPTY_STRING = "''",
-    EMPTY_JSONB = "'{}'",
-    ONE = "1"
 }
 
 export interface ColumnConstraints {

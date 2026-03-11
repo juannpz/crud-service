@@ -2,7 +2,7 @@ import { DatabaseTable, QueryType, RetrievalFormat } from "../../../database/dat
 import { UserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
+import { Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
     user_id: number;
@@ -47,9 +47,9 @@ export const postUserCredentialsRequest = Router.post<ExtendedContextVariables>(
     }, 200);
 });
 
-function validateBody(body: Body) {
+function validateBody(body: Body): ValidationResult {
     if (!body.user_id || !body.email || !body.first_name || !body.last_name || !body.password || !body.phone_number || !body.metadata)
-        return false;
+        return { valid: false, message: "Missing required properties in body" };
     
-    return true;
+    return { valid: true };
 }

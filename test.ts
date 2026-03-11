@@ -73,7 +73,7 @@ async function createUserRequest() {
                 metadata: {
                     name: "user"
                 },
-                user_status_id: 1
+				user_status_id: 1
             })
         })
     );
@@ -81,7 +81,33 @@ async function createUserRequest() {
     if (response.ok)
         console.log(response.value);
     else
-        console.error(`Error: ${response.message}`);
+        console.error(`Error: ${response}`);
+}
+
+async function createUserStatusRequest() {
+    const configHeaders = await buildConfig();
+
+    if (!configHeaders)
+        return;
+
+    const response = await safeFetch<{ message: string, userId: number }>(
+        fetch(`http://localhost:3000/v1/crud/user-status?format=object`, {
+            headers: {
+                ...configHeaders,
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({
+				name: "BLOCKED",
+				description: "Blocked user status. User is blocked. Cannot do anything."
+            })
+        })
+    );
+
+    if (response.ok)
+        console.log(response.value);
+    else
+        console.error(`Error: ${response}`);
 }
 
 async function createUserCredentialsRequest() {
@@ -161,9 +187,9 @@ async function updateUserCredentialsRequest() {
             },
             method: "PUT",
             body: JSON.stringify({
-                last_name: "kafka",
+                last_name: "new new value",
                 metadata: {
-                    name: "ahora si"
+                    prop3: "value 3"
                 }
             })
         })
@@ -175,9 +201,10 @@ async function updateUserCredentialsRequest() {
         console.error(`Error: ${response.message}`);
 }
 
-// getUserRequest();
+getUserRequest();
 // createUserRequest();
 // getUserCredentialsRequest();
 // createUserCredentialsRequest();
 // updateUserRequest();
-updateUserCredentialsRequest();
+// updateUserCredentialsRequest();
+// createUserStatusRequest();

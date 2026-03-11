@@ -1,10 +1,10 @@
-import { ColumnDefaultValue, DatabaseTable, NOTIFICATION_CHANNEL, PostgresDataType } from "../database.definition.ts";
-import { applyColumnConstraints, createFunctionAndTrigger, createTable } from "@juannpz/extra-sql";
+import { applyColumnConstraints, ColumnDefaultValue, createFunctionAndTrigger, createTable } from "@juannpz/extra-sql";
+import { DatabaseTable, NOTIFICATION_CHANNEL, PostgresDataType } from "../database.definition.ts";
 import { UserColumn } from "../users/users.definition.ts";
 
 export interface UserCredentials {
     identity_id: number;
-    user_id: number;
+    user_id: string;
     email: string;
     first_name: string;
     last_name: string;
@@ -17,7 +17,7 @@ export interface UserCredentials {
 
 interface UserCredentialsTable extends Record<string, PostgresDataType> {
     identity_id: PostgresDataType.SERIAL;
-    user_id: PostgresDataType.INTEGER;
+    user_id: PostgresDataType.UUID;
     email: PostgresDataType.TEXT;
     first_name: PostgresDataType.TEXT;
     last_name: PostgresDataType.TEXT;
@@ -43,7 +43,7 @@ enum UserCredentialsColumn {
 
 const userCredentialsTable: UserCredentialsTable = {
     identity_id: PostgresDataType.SERIAL,
-    user_id: PostgresDataType.INTEGER,
+    user_id: PostgresDataType.UUID,
     email: PostgresDataType.TEXT,
     first_name: PostgresDataType.TEXT,
     last_name: PostgresDataType.TEXT,

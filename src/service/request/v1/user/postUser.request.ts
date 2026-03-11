@@ -2,7 +2,7 @@ import { DatabaseTable, QueryType, RetrievalFormat } from "../../../database/dat
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
+import { Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
     user_status_id: number;
@@ -41,9 +41,12 @@ export const postUserRequest = Router.post<ExtendedContextVariables>("/user")
         }, 200);
 });
 
-function validateBody(body: Body) {
-    if (!body.user_status_id || !body.metadata)
-        return false;
+function validateBody(body: Body): ValidationResult {
+    if (!body.user_status_id)
+        return { valid: false, message: "Missing 'user_status_id' prop in body" };
 
-    return true;
+	if (!body.metadata)
+		return { valid: false, message: "Missing 'metadata' prop in body" };
+
+	return { valid: true };
 }
