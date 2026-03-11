@@ -29,6 +29,6 @@ function getDatabaseConfig(): DatabaseConfig {
 
 function getServicesEntrypoints(): ServicesEntrypoints {
 	return {
-		SESSION_SERVICE_URL: Deno.env.get("SESSION_SERVICE_URL") ?? ""
+		SESSION_SERVICE: Deno.env.get("SESSION_SERVICE") ?? ""
 	};
 }

@@ -5,6 +5,9 @@ export function buildBasicAuthMiddleware(sessionServiceUrl: string) {
 		async function basicAuthMiddleware(c: Context, next: () => Promise<void | Response>) {
 			const jwt = c.req.header("Authorization");
 
+			console.log(sessionServiceUrl);
+			
+
 			if (!jwt)
 				return c.json({ message: "Missing auth token" }, 401);
 

@@ -26,7 +26,7 @@ const userStatusRequest = [postUserStatusRequest];
 function addUserRequest(server: ServerBuilder<ExtendedContextVariables>, config: ServiceConfig) {
     server.group("/v1/crud", (app) => {
         userRequest.forEach(request => {
-            request.useMiddleware(buildBasicAuthMiddleware(config.servicesEntrypoints.SESSION_SERVICE_URL))
+            request.useMiddleware(buildBasicAuthMiddleware(config.servicesEntrypoints.SESSION_SERVICE))
             .register(app);
         });
     });
@@ -35,7 +35,7 @@ function addUserRequest(server: ServerBuilder<ExtendedContextVariables>, config:
 function addUserCredentialsRequest(server: ServerBuilder<ExtendedContextVariables>, config: ServiceConfig) {
     server.group("/v1/crud", (app) => {
         userCredentialsRequest.forEach(request => {
-            request.useMiddleware(buildBasicAuthMiddleware(config.servicesEntrypoints.SESSION_SERVICE_URL))
+            request.useMiddleware(buildBasicAuthMiddleware(config.servicesEntrypoints.SESSION_SERVICE))
                 .register(app);
         });
     });
@@ -44,7 +44,7 @@ function addUserCredentialsRequest(server: ServerBuilder<ExtendedContextVariable
 function addUserStatusRequest(server: ServerBuilder<ExtendedContextVariables>, config: ServiceConfig) {
 	server.group("/v1/crud", (app) => {
         userStatusRequest.forEach(request => {
-            request.useMiddleware(buildBasicAuthMiddleware(config.servicesEntrypoints.SESSION_SERVICE_URL))
+            request.useMiddleware(buildBasicAuthMiddleware(config.servicesEntrypoints.SESSION_SERVICE))
                 .register(app);
         });
     });

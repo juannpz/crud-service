@@ -3,7 +3,7 @@ import { createServer } from "@juannpz/deno-service-tools";
 import { initManager } from "./manager/init.ts";
 import { getConfig } from "./service.config.ts";
 
-const server = createServer<ExtendedContextVariables>();
+const server = createServer<ExtendedContextVariables>({port: 9999});
 
 export function init() {
     const config = getConfig();

@@ -38,5 +38,5 @@ export interface DatabaseConfig {
 }
 
 export interface ServicesEntrypoints {
-	SESSION_SERVICE_URL: string;
+	SESSION_SERVICE: string;
 }
