@@ -27,7 +27,7 @@ export const getRoleRequest = Router.get<ExtendedContextVariables>(
             return isNaN(parsed) ? undefined : parsed;
         },
     })
-	.queryParam<"name",string>("name")
+    .queryParam<"name", string>("name")
     .queryParam<"format", RetrievalFormat>("format", { required: true })
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
@@ -39,7 +39,7 @@ export const getRoleRequest = Router.get<ExtendedContextVariables>(
         const getRoleResult = await DatabaseManager.query<User>({
             conditions: {
                 role_id: roleId,
-                name
+                name,
             },
             separator: QuerySeparator.OR,
             table: DatabaseTable.ROLES,

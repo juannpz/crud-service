@@ -25,7 +25,7 @@ export function addRequest(
     addUserCredentialsRequest(server, config);
     addUserStatusRequest(server, config);
     addRolesRequest(server, config);
-	addApiKeyRequest(server, config);
+    addApiKeyRequest(server, config);
 }
 
 const userRequest = [getUserRequest, createUserRequest, updateUserRequest];
@@ -36,7 +36,7 @@ const userCredentialsRequest = [
 ];
 const userStatusRequest = [createUserStatusRequest];
 const rolesRequest = [getRoleRequest, createRoleRequest];
-const apiKeyRequest = [getApiKeyRequest, createApiKeyRequest]
+const apiKeyRequest = [getApiKeyRequest, createApiKeyRequest];
 
 function addUserRequest(
     server: ServerBuilder<ExtendedContextVariables>,

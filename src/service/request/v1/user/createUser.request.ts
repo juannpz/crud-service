@@ -10,7 +10,7 @@ import { Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
     user_status_id: number;
-	role_id: number;
+    role_id: number;
     metadata: Record<string, unknown>;
 }
 

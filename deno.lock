@@ -2,15 +2,23 @@
   "version": "5",
   "specifiers": {
     "jsr:@db/postgres@~0.19.5": "0.19.5",
+    "jsr:@denosaurs/plug@^1.1.0": "1.1.0",
+    "jsr:@felix/bcrypt@^1.0.8": "1.0.8",
     "jsr:@hono/hono@4.7.8": "4.7.8",
     "jsr:@juannpz/deno-service-tools@0.6.0": "0.6.0",
     "jsr:@juannpz/extra-sql@0.0.9": "0.0.9",
     "jsr:@std/bytes@^1.0.5": "1.0.5",
     "jsr:@std/crypto@^1.0.4": "1.0.4",
     "jsr:@std/dotenv@~0.225.5": "0.225.5",
+    "jsr:@std/encoding@1": "1.0.10",
     "jsr:@std/encoding@^1.0.9": "1.0.10",
+    "jsr:@std/fmt@1": "1.0.7",
     "jsr:@std/fmt@^1.0.6": "1.0.7",
+    "jsr:@std/fs@1": "1.0.23",
+    "jsr:@std/internal@^1.0.12": "1.0.12",
+    "jsr:@std/path@1": "1.0.9",
     "jsr:@std/path@^1.0.8": "1.0.9",
+    "jsr:@std/path@^1.1.4": "1.1.4",
     "npm:pg@^8.15.6": "8.15.6"
   },
   "jsr": {
@@ -19,9 +27,24 @@
       "dependencies": [
         "jsr:@std/bytes",
         "jsr:@std/crypto",
-        "jsr:@std/encoding",
-        "jsr:@std/fmt",
-        "jsr:@std/path"
+        "jsr:@std/encoding@^1.0.9",
+        "jsr:@std/fmt@^1.0.6",
+        "jsr:@std/path@^1.0.8"
+      ]
+    },
+    "@denosaurs/plug@1.1.0": {
+      "integrity": "eb2f0b7546c7bca2000d8b0282c54d50d91cf6d75cb26a80df25a6de8c4bc044",
+      "dependencies": [
+        "jsr:@std/encoding@1",
+        "jsr:@std/fmt@1",
+        "jsr:@std/fs",
+        "jsr:@std/path@1"
+      ]
+    },
+    "@felix/bcrypt@1.0.8": {
+      "integrity": "59c41160fc027882479c512db5d53792c4d91aadcd49467c85caa2f1679046f2",
+      "dependencies": [
+        "jsr:@denosaurs/plug"
       ]
     },
     "@hono/hono@4.7.8": {
@@ -51,8 +74,24 @@
     "@std/fmt@1.0.7": {
       "integrity": "2a727c043d8df62cd0b819b3fb709b64dd622e42c3b1bb817ea7e6cc606360fb"
     },
+    "@std/fs@1.0.23": {
+      "integrity": "3ecbae4ce4fee03b180fa710caff36bb5adb66631c46a6460aaad49515565a37",
+      "dependencies": [
+        "jsr:@std/internal",
+        "jsr:@std/path@^1.1.4"
+      ]
+    },
+    "@std/internal@1.0.12": {
+      "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
+    },
     "@std/path@1.0.9": {
       "integrity": "260a49f11edd3db93dd38350bf9cd1b4d1366afa98e81b86167b4e3dd750129e"
+    },
+    "@std/path@1.1.4": {
+      "integrity": "1d2d43f39efb1b42f0b1882a25486647cb851481862dc7313390b2bb044314b5",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
     }
   },
   "npm": {
@@ -421,6 +460,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@db/postgres@~0.19.5",
+      "jsr:@felix/bcrypt@^1.0.8",
       "jsr:@juannpz/deno-service-tools@0.6.0",
       "jsr:@juannpz/extra-sql@0.0.9",
       "jsr:@std/dotenv@~0.225.5"

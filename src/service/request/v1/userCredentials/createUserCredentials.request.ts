@@ -7,6 +7,7 @@ import { UserCredentials } from "../../../database/userCredentials/userCredentia
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router, ValidationResult } from "@juannpz/deno-service-tools";
+import { hash } from "@felix/bcrypt";
 
 interface Body extends Record<string, unknown> {
     user_id: number;
@@ -28,9 +29,11 @@ export const createUserCredentialsRequest = Router.post<ExtendedContextVariables
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
-        const { metadata, email, first_name, last_name, password, phone, user_id } = context.body;
+        const { metadata, email, password, first_name, last_name, phone, user_id } = context.body;
 
         const { format } = context.query;
+
+        const passwordHash = await hash(password);
 
         const createUserCredentialsResult = await DatabaseManager.query<
             UserCredentials
@@ -45,7 +48,7 @@ export const createUserCredentialsRequest = Router.post<ExtendedContextVariables
                 email,
                 first_name,
                 last_name,
-                password,
+                password: passwordHash,
                 phone,
                 metadata,
             }],

@@ -5,6 +5,7 @@
     },
     "imports": {
         "@db/postgres": "jsr:@db/postgres@^0.19.5",
+        "@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.8",
         "@juannpz/deno-service-tools": "jsr:@juannpz/deno-service-tools@0.6.0",
         "@juannpz/extra-sql": "jsr:@juannpz/extra-sql@0.0.9",
         "@std/dotenv": "jsr:@std/dotenv@^0.225.5"
