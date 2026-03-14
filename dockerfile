@@ -17,4 +17,4 @@ RUN deno cache index.ts
 EXPOSE 3000
 
 # CMD limpio usando un solo wait-for.sh para todos los servicios
-CMD ["./wait-for.sh", "postgres:5432", "kafka:9092", "--", "deno", "run", "--allow-all", "index.ts"]
+CMD ["./wait-for.sh", "postgres:5432", "kafka:9092", "--", "deno", "run", "--allow-all", "--unstable-kv", "index.ts"]

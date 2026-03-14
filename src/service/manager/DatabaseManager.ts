@@ -1,12 +1,27 @@
-import { selectData, selectTsquery, insertInto, insertIntoData, updateData, removeNullAndUndefinedFromIterable, stringifyObjectsInIterable, stringifyObjectsInObject, removeNullAndUndefinedFromObject } from "@juannpz/extra-sql";
-import { BuildQueryResult, QueryOptions, QueryResult, QueryType, RetrievalFormat } from "../database/database.definition.ts";
+import {
+    insertInto,
+    insertIntoData,
+    removeNullAndUndefinedFromIterable,
+    removeNullAndUndefinedFromObject,
+    selectData,
+    selectTsquery,
+    stringifyObjectsInIterable,
+    stringifyObjectsInObject,
+    updateData,
+} from "@juannpz/extra-sql";
+import {
+    BuildQueryResult,
+    QueryOptions,
+    QueryResult,
+    QueryType,
+    RetrievalFormat,
+} from "../database/database.definition.ts";
 import { PoolClient, QueryArrayResult, QueryObjectResult } from "@db/postgres";
 import { DatabaseClient } from "../database/DatabaseClient.ts";
 import { Result, ResUtil } from "@juannpz/deno-service-tools";
 import { DatabaseConfig } from "../service.definition.ts";
 
-export class DatabaseManager extends DatabaseClient{
-
+export class DatabaseManager extends DatabaseClient {
     private constructor() {
         super();
     }
@@ -15,7 +30,9 @@ export class DatabaseManager extends DatabaseClient{
         this._init(config);
     }
 
-    public static async query<T>(options: QueryOptions): Promise<Result<Required<QueryResult<T>>>> {
+    public static async query<T>(
+        options: QueryOptions,
+    ): Promise<Result<Required<QueryResult<T>>>> {
         const client = await this.getClient();
 
         try {
@@ -25,46 +42,58 @@ export class DatabaseManager extends DatabaseClient{
 
                 case RetrievalFormat.OBJECT:
                     return await this.queryObject<T>(options, client);
-            
-                default:
-                    return ResUtil.Fail(`Inavalid retrieval format: ${options.retrievalFormat}`)
-            }
 
+                default:
+                    return ResUtil.Fail(
+                        `Inavalid retrieval format: ${options.retrievalFormat}`,
+                    );
+            }
         } catch (error) {
             return ResUtil.Fail("Error executing query", error);
-
         } finally {
             client.release();
         }
     }
 
-    private static async queryObject<T>(options: QueryOptions, client: PoolClient): Promise<Result<Required<QueryObjectResult<T>>>> {
+    private static async queryObject<T>(
+        options: QueryOptions,
+        client: PoolClient,
+    ): Promise<Result<Required<QueryObjectResult<T>>>> {
         try {
             const buildQueryResult = this.buildQuery(options);
 
-            if (!buildQueryResult.ok)
+            if (!buildQueryResult.ok) {
                 return buildQueryResult;
+            }
 
-            const queryResult = await client.queryObject<T>(buildQueryResult.value.queryString, buildQueryResult.value.queryData);
+            const queryResult = await client.queryObject<T>(
+                buildQueryResult.value.queryString,
+                buildQueryResult.value.queryData,
+            );
 
-            return ResUtil.Succeed(queryResult as Required<QueryObjectResult<T>>)
-
+            return ResUtil.Succeed(queryResult as Required<QueryObjectResult<T>>);
         } catch (error) {
             return ResUtil.Fail("Error executing query", error);
         }
     }
 
-    private static async queryArray<T extends unknown[]>(options: QueryOptions, client: PoolClient): Promise<Result<Required<QueryArrayResult<T>>>> {
+    private static async queryArray<T extends unknown[]>(
+        options: QueryOptions,
+        client: PoolClient,
+    ): Promise<Result<Required<QueryArrayResult<T>>>> {
         try {
             const buildQueryResult = this.buildQuery(options);
 
-            if (!buildQueryResult.ok)
+            if (!buildQueryResult.ok) {
                 return buildQueryResult;
+            }
 
-            const queryResult = await client.queryArray<T>(buildQueryResult.value.queryString, buildQueryResult.value.queryData);
+            const queryResult = await client.queryArray<T>(
+                buildQueryResult.value.queryString,
+                buildQueryResult.value.queryData,
+            );
 
-            return ResUtil.Succeed(queryResult as Required<QueryArrayResult<T>>)
-
+            return ResUtil.Succeed(queryResult as Required<QueryArrayResult<T>>);
         } catch (error) {
             return ResUtil.Fail("Error executing query", error);
         }
@@ -77,50 +106,81 @@ export class DatabaseManager extends DatabaseClient{
         switch (options.type) {
             case QueryType.SELECT:
                 if (options.isTextSearch) {
-                    queryString = selectTsquery(options.table, options.text, options.operator, options.options);
-
+                    queryString = selectTsquery(
+                        options.table,
+                        options.text,
+                        options.operator,
+                        options.options,
+                    );
                 } else {
-                    const { query, data } = selectData(options.table, options.conditions, options.operator, options.separator);
+                    const cleanConditions = removeNullAndUndefinedFromObject(options.conditions);
+
+                    const { query, data } = selectData(
+                        options.table,
+                        cleanConditions,
+                        options.operator,
+                        options.separator,
+                    );
 
                     queryString = query;
                     queryData = data;
                 }
 
                 break;
-            
+
             case QueryType.INSERT:
                 if (options.isParameterized) {
-                    const { query, data } = insertIntoData(options.table, this.formatIterableQueryData(options.data), { returning: true });
+                    const { query, data } = insertIntoData(
+                        options.table,
+                        this.formatIterableQueryData(options.data),
+                        { returning: true },
+                    );
 
                     queryString = query;
                     queryData = data;
-                    
                 } else {
-                    queryString = insertInto(options.table, this.formatIterableQueryData(options.data), { returning: true });
+                    queryString = insertInto(
+                        options.table,
+                        this.formatIterableQueryData(options.data),
+                        { returning: true },
+                    );
                 }
 
                 break;
 
             case QueryType.UPDATE: {
-                const { query, data } = updateData(options.table, { ...this.formatObjectQueryData(options.data), updated_at: new Date() }, options.conditions, options.operator, options.separator, { returning: true });
+                const { query, data } = updateData(
+                    options.table,
+                    {
+                        ...this.formatObjectQueryData(options.data),
+                        updated_at: new Date(),
+                    },
+                    options.conditions,
+                    options.operator,
+                    options.separator,
+                    { returning: true },
+                );
 
                 queryString = query;
                 queryData = data;
-                
+
                 break;
             }
-        
+
             default:
                 return ResUtil.Fail("Missing query type in query options");
         }
 
-        if (!queryString)
+        if (!queryString) {
             return ResUtil.Fail("Error building query. Missing query string");
+        }
 
         return ResUtil.Succeed({ queryString, queryData });
     }
 
-    private static formatIterableQueryData(data: Iterable<Record<string, unknown>>) {
+    private static formatIterableQueryData(
+        data: Iterable<Record<string, unknown>>,
+    ) {
         return stringifyObjectsInIterable(removeNullAndUndefinedFromIterable(data));
     }
 

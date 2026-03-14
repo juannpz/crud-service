@@ -8,7 +8,7 @@ export const keyGenerationConfig: IGenerateKeyConfig = {
     algorithm: { name: "HMAC", hash: "SHA-256" },
     extractable: false,
     format: "raw",
-    keyUsages: ["sign", "verify"]
+    keyUsages: ["sign", "verify"],
 };
 
 export const JWT_PAYLOAD: JWTPayload = {
@@ -16,17 +16,13 @@ export const JWT_PAYLOAD: JWTPayload = {
     aud: "test",
     exp: getNumericDate(60 * 60),
     iss: "test",
-    sub: "test"
+    sub: "test",
 };
 
 export interface ServiceConfig {
-    authConfig: AuthConfig;
     dbConfig: DatabaseConfig;
-	servicesEntrypoints: ServicesEntrypoints;
-}
-
-export interface AuthConfig {
-    JWT_KEY: string;
+    servicesEntrypoints: ServicesEntrypoints;
+    authConfig: ServiceAuthConfig;
 }
 
 export interface DatabaseConfig {
@@ -38,5 +34,11 @@ export interface DatabaseConfig {
 }
 
 export interface ServicesEntrypoints {
-	SESSION_SERVICE: string;
+    SESSION_SERVICE: string;
+}
+
+export interface ServiceAuthConfig {
+    SERVICE_AUTH_USER_ID: string;
+    SERVICE_AUTH_ROLE: string;
+    SERVICE_AUTH_PUBLIC_KEY: string;
 }

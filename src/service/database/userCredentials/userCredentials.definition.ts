@@ -1,68 +1,75 @@
-import { applyColumnConstraints, ColumnDefaultValue, createFunctionAndTrigger, createTable } from "@juannpz/extra-sql";
+import {
+    applyColumnConstraints,
+    ColumnDefaultValue,
+    createFunctionAndTrigger,
+    createTable,
+} from "@juannpz/extra-sql";
 import { DatabaseTable, NOTIFICATION_CHANNEL, PostgresDataType } from "../database.definition.ts";
 import { UserColumn } from "../users/users.definition.ts";
 
 export interface UserCredentials {
-    identity_id: number;
+    user_credentials_id: number;
     user_id: string;
     email: string;
     first_name: string;
     last_name: string;
     password: string;
-    phone_number: Record<string, unknown>;
+    phone: Record<string, unknown>;
     metadata: Record<string, unknown>;
     created_at: Date;
     updated_at: Date;
 }
 
 interface UserCredentialsTable extends Record<string, PostgresDataType> {
-    identity_id: PostgresDataType.SERIAL;
+    user_credentials_id: PostgresDataType.SERIAL;
     user_id: PostgresDataType.UUID;
     email: PostgresDataType.TEXT;
     first_name: PostgresDataType.TEXT;
     last_name: PostgresDataType.TEXT;
     password: PostgresDataType.TEXT;
-    phone_number: PostgresDataType.JSONB;
+    phone: PostgresDataType.JSONB;
     metadata: PostgresDataType.JSONB;
     created_at: PostgresDataType.TIMESTAMPTZ;
     updated_at: PostgresDataType.TIMESTAMPTZ;
 }
 
 enum UserCredentialsColumn {
-    IDENTITY_ID = "identity_id",
+    USER_CREDENTIALS_ID = "user_credentials_id",
     USER_ID = "user_id",
     EMAIL = "email",
     FIRST_NAME = "first_name",
     LAST_NAME = "last_name",
     PASSWORD = "password",
-    PHONE_NUMBER = "phone_number",
+    PHONE = "phone",
     METADATA = "metadata",
     CREATED_AT = "created_at",
-    UPDATED_AT = "updated_at"
+    UPDATED_AT = "updated_at",
 }
 
 const userCredentialsTable: UserCredentialsTable = {
-    identity_id: PostgresDataType.SERIAL,
+    user_credentials_id: PostgresDataType.SERIAL,
     user_id: PostgresDataType.UUID,
     email: PostgresDataType.TEXT,
     first_name: PostgresDataType.TEXT,
     last_name: PostgresDataType.TEXT,
     password: PostgresDataType.TEXT,
-    phone_number: PostgresDataType.JSONB,
+    phone: PostgresDataType.JSONB,
     metadata: PostgresDataType.JSONB,
     created_at: PostgresDataType.TIMESTAMPTZ,
-    updated_at: PostgresDataType.TIMESTAMPTZ
-}
+    updated_at: PostgresDataType.TIMESTAMPTZ,
+};
 
 export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
     UserCredentialsColumn,
     DatabaseTable.USERS,
     UserColumn.USER_ID
 >(
-    createTable(DatabaseTable.USER_CREDENTIALS, userCredentialsTable, { pk: UserCredentialsColumn.IDENTITY_ID }),
+    createTable(DatabaseTable.USER_CREDENTIALS, userCredentialsTable, {
+        pk: UserCredentialsColumn.USER_CREDENTIALS_ID,
+    }),
     {
         user_id: { notNull: true, unique: true },
-        phone_number: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
+        phone: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
         email: { notNull: true, unique: true },
         first_name: { notNull: true },
         last_name: { notNull: true },
@@ -77,7 +84,7 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
             column: UserColumn.USER_ID,
             onDelete: "CASCADE",
         },
-    }
+    },
 );
 
 export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY = createFunctionAndTrigger<
@@ -88,12 +95,12 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY = createFunction
     UserCredentialsColumn,
     UserColumn
 >(
-    'notify_user_credentials_change',
+    "notify_user_credentials_change",
     {
-		topLevelIdentifier: UserCredentialsColumn.USER_ID,
+        topLevelIdentifier: UserCredentialsColumn.USER_ID,
         trackNewValues: {
-			user_id: true,
-            phone_number: true,
+            user_id: true,
+            phone: true,
             email: true,
             first_name: true,
             last_name: true,
@@ -101,7 +108,7 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY = createFunction
         },
         trackOldValues: {
             user_id: true,
-            phone_number: true,
+            phone: true,
             email: true,
             first_name: true,
             last_name: true,
@@ -113,19 +120,19 @@ export const CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY = createFunction
                 sourceColumn: UserCredentialsColumn.USER_ID,
                 selectColumns: {
                     user_status_id: true,
-                }
-            }
+                },
+            },
         },
         channelName: NOTIFICATION_CHANNEL,
         triggers: {
-            'user_credentials_change_trigger': {
+            "user_credentials_change_trigger": {
                 tableName: DatabaseTable.USER_CREDENTIALS,
-                timing: 'AFTER',
+                timing: "AFTER",
                 events: {
-                    'UPDATE': true
+                    "UPDATE": true,
                 },
                 forEach: "ROW",
             },
-        }
-    }
+        },
+    },
 );

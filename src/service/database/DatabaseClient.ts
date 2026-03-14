@@ -1,13 +1,18 @@
-import { CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY, CREATE_USER_CREDENTIALS_TABLE_QUERY } from "./userCredentials/userCredentials.definition.ts";
+import {
+    CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY,
+    CREATE_USER_CREDENTIALS_TABLE_QUERY,
+} from "./userCredentials/userCredentials.definition.ts";
 import { CREATE_USER_STATUS_TABLE_QUERY } from "./userStatus/userStatus.definition.ts";
 import { CREATE_USER_TABLE_QUERY } from "./users/users.definition.ts";
 import { DatabaseConfig } from "../service.definition.ts";
 import { Pool, PoolClient } from "@db/postgres";
+import { CREATE_ROLES_TABLE_QUERY } from "./roles/roles.definition.ts";
+import { CREATE_API_KEYS_TABLE_QUERY } from "./apiKeys/apiKeys.definition.ts";
 
 export class DatabaseClient {
     protected static pool: Pool | null = null;
-    
-    protected constructor() { }
+
+    protected constructor() {}
 
     protected static async _init(config: DatabaseConfig) {
         this.pool = new Pool({
@@ -18,31 +23,32 @@ export class DatabaseClient {
             password: config.DB_PASSWORD,
             host_type: "tcp",
             tls: {
-                enabled: false
-            }
+                enabled: false,
+            },
         }, 10);
 
         const poolClient = await this.pool.connect();
-        
+
         try {
             await this.generateTables(poolClient);
             await this.generateNotificationTriggers(poolClient);
-
         } finally {
             poolClient.release();
         }
     }
 
     protected static async disconnect() {
-        if (!this.pool)
+        if (!this.pool) {
             throw new Error("Postgres pool not initialized");
+        }
 
         await this.pool.end();
     }
 
     protected static async getClient() {
-        if (!this.pool)
+        if (!this.pool) {
             throw new Error("Postgres pool not initialized");
+        }
 
         return await this.pool.connect();
     }
@@ -51,13 +57,15 @@ export class DatabaseClient {
         await Promise.all([
             client.queryObject(CREATE_USER_TABLE_QUERY),
             client.queryObject(CREATE_USER_CREDENTIALS_TABLE_QUERY),
-            client.queryObject(CREATE_USER_STATUS_TABLE_QUERY)
+            client.queryObject(CREATE_USER_STATUS_TABLE_QUERY),
+            client.queryObject(CREATE_ROLES_TABLE_QUERY),
+            client.queryObject(CREATE_API_KEYS_TABLE_QUERY),
         ]);
     }
 
     private static async generateNotificationTriggers(client: PoolClient) {
         await Promise.all([
-            client.queryObject(CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY)
+            client.queryObject(CREATE_USER_CREDENTIALS_NOTIFICATION_TRIGGER_QUERY),
         ]);
     }
 }

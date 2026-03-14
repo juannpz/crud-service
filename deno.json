@@ -1,12 +1,22 @@
 {
-  "tasks": {
-    "dev": "deno run --allow-all --watch index.ts",
-    "start": "deno run --allow-all index.ts"
-  },
-  "imports": {
-    "@db/postgres": "jsr:@db/postgres@^0.19.5",
-    "@juannpz/deno-service-tools": "jsr:@juannpz/deno-service-tools@0.5.7-3",
-    "@juannpz/extra-sql": "jsr:@juannpz/extra-sql@0.0.9",
-    "@std/dotenv": "jsr:@std/dotenv@^0.225.5"
-  }
+    "tasks": {
+        "dev": "deno run --allow-all --watch --unstable-kv index.ts",
+        "start": "deno run --allow-all index.ts"
+    },
+    "imports": {
+        "@db/postgres": "jsr:@db/postgres@^0.19.5",
+        "@juannpz/deno-service-tools": "jsr:@juannpz/deno-service-tools@0.6.0",
+        "@juannpz/extra-sql": "jsr:@juannpz/extra-sql@0.0.9",
+        "@std/dotenv": "jsr:@std/dotenv@^0.225.5"
+    },
+    "lint": {
+        "rules": {
+            "tags": ["recommended"]
+        }
+    },
+    "fmt": {
+        "useTabs": false,
+        "indentWidth": 4,
+        "lineWidth": 100
+    }
 }

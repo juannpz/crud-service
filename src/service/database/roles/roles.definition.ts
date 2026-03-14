@@ -1,47 +1,52 @@
 import { applyColumnConstraints, ColumnDefaultValue, createTable } from "@juannpz/extra-sql";
 import { DatabaseTable, PostgresDataType } from "../database.definition.ts";
 
-export interface UserStatus {
-    user_status_id: number;
+export interface Roles {
+    role_id: number;
     name: string;
     description: string;
+    metadata: Record<string, unknown>;
     created_at: Date;
     updated_at: Date;
 }
 
-interface UserStatusTable extends Record<string, PostgresDataType> {
-    user_status_id: PostgresDataType.SERIAL;
+interface RolesTable extends Record<string, PostgresDataType> {
+    role_id: PostgresDataType.SERIAL;
     name: PostgresDataType.TEXT;
     description: PostgresDataType.TEXT;
+    metadata: PostgresDataType.JSONB;
     created_at: PostgresDataType.TIMESTAMPTZ;
     updated_at: PostgresDataType.TIMESTAMPTZ;
 }
 
-enum UserStatusColumn {
-    USER_STATUS_ID = "user_status_id",
+enum RolesColumn {
+    ROLE_ID = "role_id",
     NAME = "name",
     DESCRIPTION = "description",
+    METADATA = "metadata",
     CREATED_AT = "created_at",
     UPDATED_AT = "updated_at",
 }
 
-const userStatusTable: UserStatusTable = {
-    user_status_id: PostgresDataType.SERIAL,
+const rolesTable: RolesTable = {
+    role_id: PostgresDataType.SERIAL,
     name: PostgresDataType.TEXT,
     description: PostgresDataType.TEXT,
+    metadata: PostgresDataType.JSONB,
     created_at: PostgresDataType.TIMESTAMPTZ,
     updated_at: PostgresDataType.TIMESTAMPTZ,
 };
 
-export const CREATE_USER_STATUS_TABLE_QUERY = applyColumnConstraints<
-    UserStatusColumn
+export const CREATE_ROLES_TABLE_QUERY = applyColumnConstraints<
+    RolesColumn
 >(
-    createTable(DatabaseTable.USER_STATUS, userStatusTable, {
-        pk: UserStatusColumn.USER_STATUS_ID,
+    createTable(DatabaseTable.ROLES, rolesTable, {
+        pk: RolesColumn.ROLE_ID,
     }),
     {
         name: { notNull: true, unique: true },
         description: { notNull: true },
+        metadata: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
         created_at: { notNull: true, default: ColumnDefaultValue.NOW },
         updated_at: { notNull: true, default: ColumnDefaultValue.NOW },
     },

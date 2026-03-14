@@ -1,20 +1,19 @@
-import { AuthConfig, DatabaseConfig, ServiceConfig, ServicesEntrypoints } from "./service.definition.ts";
+import {
+    DatabaseConfig,
+    ServiceAuthConfig,
+    ServiceConfig,
+    ServicesEntrypoints,
+} from "./service.definition.ts";
 import { checkEnv } from "@juannpz/deno-service-tools";
 
-export function getConfig() {
+function getConfig() {
     const config: ServiceConfig = {
-        authConfig: getAuthConfig(),
         dbConfig: getDatabaseConfig(),
-		servicesEntrypoints: getServicesEntrypoints()
+        servicesEntrypoints: getServicesEntrypoints(),
+        authConfig: getServiceAuthConfig(),
     };
 
     return checkEnv(config);
-}
-
-function getAuthConfig(): AuthConfig {
-    return {
-        JWT_KEY: Deno.env.get("JWT_KEY") ?? ""
-    };
 }
 
 function getDatabaseConfig(): DatabaseConfig {
@@ -23,12 +22,22 @@ function getDatabaseConfig(): DatabaseConfig {
         DB_PORT: parseInt(Deno.env.get("DB_PORT") ?? ""),
         DB_USER: Deno.env.get("DB_USER") ?? "",
         DB_PASSWORD: Deno.env.get("DB_PASSWORD") ?? "",
-        DB_NAME: Deno.env.get("DB_NAME") ?? ""
+        DB_NAME: Deno.env.get("DB_NAME") ?? "",
     };
 }
 
 function getServicesEntrypoints(): ServicesEntrypoints {
-	return {
-		SESSION_SERVICE: Deno.env.get("SESSION_SERVICE") ?? ""
-	};
+    return {
+        SESSION_SERVICE: Deno.env.get("SESSION_SERVICE") ?? "",
+    };
 }
+
+function getServiceAuthConfig(): ServiceAuthConfig {
+    return {
+        SERVICE_AUTH_USER_ID: Deno.env.get("SERVICE_AUTH_USER_ID") ?? "",
+        SERVICE_AUTH_ROLE: Deno.env.get("SERVICE_AUTH_ROLE") ?? "",
+        SERVICE_AUTH_PUBLIC_KEY: Deno.env.get("SERVICE_AUTH_PUBLIC_KEY") ?? "",
+    };
+}
+
+export const SERVICE_CONFIG = getConfig();
