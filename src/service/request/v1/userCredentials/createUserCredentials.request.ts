@@ -6,7 +6,7 @@ import {
 import { UserCredentials } from "../../../database/userCredentials/userCredentials.definition.ts";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router, ValidationResult } from "@juannpz/deno-service-tools";
+import { buildRequestResponse, Router, ValidationResult } from "@juannpz/deno-service-tools";
 import { hash } from "@felix/bcrypt";
 
 interface Body extends Record<string, unknown> {
@@ -25,7 +25,9 @@ export const createUserCredentialsRequest = Router.post<ExtendedContextVariables
     .describe("User credentials update")
     .body<Body>()
     .validateBody(validateBody)
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
@@ -57,11 +59,17 @@ export const createUserCredentialsRequest = Router.post<ExtendedContextVariables
         if (!createUserCredentialsResult.ok) {
             console.error(createUserCredentialsResult.message);
 
-            return context.c.json({
-                message: createUserCredentialsResult.message,
-                error: createUserCredentialsResult.error,
-            });
+            const response = buildRequestResponse(createUserCredentialsResult);
+
+            return context.c.json(response, response.code);
         }
+
+        // sanitize user credentials object by removing password
+        const userCredentials = createUserCredentialsResult.value.rows[0] as UserCredentials;
+
+        const { password: _hash, ...safeUser } = userCredentials;
+
+        createUserCredentialsResult.value.rows[0] = safeUser as UserCredentials;
 
         return context.c.json({
             message: `${createUserCredentialsResult.value.rowCount} ${

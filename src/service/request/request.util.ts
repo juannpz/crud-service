@@ -14,3 +14,9 @@ export function getContextVariables(
 ): ExtendedContextVariables {
     return context.var;
 }
+
+export function transformStringifiedBooleanToBoolean(value: unknown) {
+    if (typeof value === "string" && value === "true") return true;
+
+    if (typeof value === "string" && value === "false") return false;
+}

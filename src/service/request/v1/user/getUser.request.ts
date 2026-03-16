@@ -14,26 +14,23 @@ export const getUserRequest = Router.get<ExtendedContextVariables>(
 )
     .describe("User retrieval")
     .pathParam<"user_id", string>("user_id")
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
-    .queryParam<"user_id", string>("user_id")
-    .queryParam<"user_status_id", number | undefined>("user_status_id", {
-        transform: (value) => {
-            if (!value) return undefined;
-            const parsed = parseInt(value as string);
-            return isNaN(parsed) ? undefined : parsed;
-        },
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
     })
+    .queryParam<"user_id", string>("user_id")
+    .queryParam<"user_status_id", string>("user_status_id")
+    .queryParam<"role_id", string>("role_id")
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
-        const { format } = context.query;
+        const { format, role_id, user_status_id } = context.query;
         const userId = context.params.user_id || context.query.user_id;
-        const userStatusId = context.query.user_status_id;
 
         const getUserResult = await DatabaseManager.query<User>({
             conditions: {
                 user_id: userId,
-                user_status_id: userStatusId,
+                user_status_id,
+                role_id,
             },
             separator: QuerySeparator.OR,
             table: DatabaseTable.USERS,

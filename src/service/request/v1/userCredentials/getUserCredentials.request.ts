@@ -14,7 +14,9 @@ export const getUserCredentialsRequest = Router.get<ExtendedContextVariables>(
 )
     .describe("User credentials retrieval")
     .pathParam<"user_id", string>("user_id")
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .queryParam<"user_id", string>("user_id")
     .queryParam<"identity_id", number>("identity_id", {
         transform: (value) => parseInt(value as string),

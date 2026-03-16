@@ -9,18 +9,18 @@ import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
 import { Router } from "@juannpz/deno-service-tools";
 
-export const getRoleRequest = Router.get<ExtendedContextVariables>(
-    "/role/:role_id?",
+export const getUserStatusRequest = Router.get<ExtendedContextVariables>(
+    "/user-status/:user_status_id?",
 )
-    .describe("Role retrieval")
-    .pathParam<"role_id", number | undefined>("role_id", {
+    .describe("User status retrieval")
+    .pathParam<"user_status_id", number | undefined>("user_status_id", {
         transform: (value) => {
             if (!value) return undefined;
             const parsed = parseInt(value as string);
             return isNaN(parsed) ? undefined : parsed;
         },
     })
-    .queryParam<"role_id", number | undefined>("role_id", {
+    .queryParam<"user_status_id", number | undefined>("user_status_id", {
         transform: (value) => {
             if (!value) return undefined;
             const parsed = parseInt(value as string);
@@ -36,30 +36,33 @@ export const getRoleRequest = Router.get<ExtendedContextVariables>(
     .handler(async (context) => {
         const { format, name } = context.query;
 
-        const roleId = context.params.role_id ?? context.query.role_id;
+        const userStatusId = context.params.user_status_id ?? context.query.user_status_id;
 
-        const getRoleResult = await DatabaseManager.query<User>({
+        const getUserStatusResult = await DatabaseManager.query<User>({
             conditions: {
-                role_id: roleId,
+                user_status_id: userStatusId,
                 name,
             },
             separator: QuerySeparator.OR,
-            table: DatabaseTable.ROLES,
+            table: DatabaseTable.USER_STATUS,
             retrievalFormat: format,
             type: QueryType.SELECT,
             isTextSearch: false,
         });
 
-        if (!getRoleResult.ok) {
-            console.error(getRoleResult.message);
+        if (!getUserStatusResult.ok) {
+            console.error(getUserStatusResult.message);
 
-            return context.c.json({ message: getRoleResult.message, error: getRoleResult.error });
+            return context.c.json({
+                message: getUserStatusResult.message,
+                error: getUserStatusResult.error,
+            });
         }
 
         return context.c.json({
-            message: `Found ${getRoleResult.value.rowCount} ${
-                getRoleResult.value.rowCount === 1 ? "entry" : "entrys"
+            message: `Found ${getUserStatusResult.value.rowCount} ${
+                getUserStatusResult.value.rowCount === 1 ? "entry" : "entrys"
             }`,
-            data: getRoleResult.value.rows,
+            data: getUserStatusResult.value.rows,
         }, 200);
     });

@@ -19,7 +19,9 @@ export const createRoleRequest = Router.post<ExtendedContextVariables>(
     .describe("Role creation")
     .body<Body>()
     .validateBody(validateBody)
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
@@ -31,7 +33,7 @@ export const createRoleRequest = Router.post<ExtendedContextVariables>(
             table: DatabaseTable.ROLES,
             retrievalFormat: format,
             type: QueryType.INSERT,
-            isParameterized: false,
+            isParameterized: true,
             data: [{ name, description }],
         });
 

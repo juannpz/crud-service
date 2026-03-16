@@ -11,7 +11,7 @@ export interface Roles {
 }
 
 interface RolesTable extends Record<string, PostgresDataType> {
-    role_id: PostgresDataType.SERIAL;
+    role_id: PostgresDataType.UUID;
     name: PostgresDataType.TEXT;
     description: PostgresDataType.TEXT;
     metadata: PostgresDataType.JSONB;
@@ -29,7 +29,7 @@ enum RolesColumn {
 }
 
 const rolesTable: RolesTable = {
-    role_id: PostgresDataType.SERIAL,
+    role_id: PostgresDataType.UUID,
     name: PostgresDataType.TEXT,
     description: PostgresDataType.TEXT,
     metadata: PostgresDataType.JSONB,
@@ -44,6 +44,7 @@ export const CREATE_ROLES_TABLE_QUERY = applyColumnConstraints<
         pk: RolesColumn.ROLE_ID,
     }),
     {
+        role_id: { notNull: true, default: ColumnDefaultValue.UUID },
         name: { notNull: true, unique: true },
         description: { notNull: true },
         metadata: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },

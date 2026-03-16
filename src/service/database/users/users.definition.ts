@@ -3,8 +3,8 @@ import { DatabaseTable, PostgresDataType } from "../database.definition.ts";
 
 export interface User {
     user_id: string;
-    user_status_id: number;
-    role_id: number;
+    user_status_id: string | null;
+    role_id: string;
     metadata: Record<string, unknown>;
     created_at: Date;
     updated_at: Date;
@@ -12,8 +12,8 @@ export interface User {
 
 interface UsersTable extends Record<string, PostgresDataType> {
     user_id: PostgresDataType.UUID;
-    user_status_id: PostgresDataType.INTEGER;
-    role_id: PostgresDataType.INTEGER;
+    user_status_id: PostgresDataType.UUID;
+    role_id: PostgresDataType.UUID;
     metadata: PostgresDataType.JSONB;
     created_at: PostgresDataType.TIMESTAMPTZ;
     updated_at: PostgresDataType.TIMESTAMPTZ;
@@ -30,8 +30,8 @@ export enum UserColumn {
 
 const usersTable: UsersTable = {
     user_id: PostgresDataType.UUID,
-    user_status_id: PostgresDataType.INTEGER,
-    role_id: PostgresDataType.INTEGER,
+    user_status_id: PostgresDataType.UUID,
+    role_id: PostgresDataType.UUID,
     metadata: PostgresDataType.JSONB,
     created_at: PostgresDataType.TIMESTAMPTZ,
     updated_at: PostgresDataType.TIMESTAMPTZ,
@@ -41,7 +41,6 @@ export const CREATE_USER_TABLE_QUERY = applyColumnConstraints<UserColumn>(
     createTable(DatabaseTable.USERS, usersTable, { pk: UserColumn.USER_ID }),
     {
         user_id: { notNull: true, unique: true, default: ColumnDefaultValue.UUID },
-        user_status_id: { notNull: true, default: ColumnDefaultValue.ONE },
         role_id: { notNull: true },
         metadata: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
         created_at: { notNull: true, default: ColumnDefaultValue.NOW },

@@ -25,7 +25,9 @@ export const updateUserCredentialsRequest = Router.put<ExtendedContextVariables>
     .pathParam<"user_id", string>("user_id")
     .body<Body>()
     .validateBody(validateBody)
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .queryParam<"user_id", string>("user_id")
     .queryParam<"identity_id", number>("identity_id", {
         transform: (value) => parseInt(value as string),

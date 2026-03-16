@@ -8,7 +8,7 @@ import { DatabaseTable, NOTIFICATION_CHANNEL, PostgresDataType } from "../databa
 import { UserColumn } from "../users/users.definition.ts";
 
 export interface UserCredentials {
-    user_credentials_id: number;
+    user_credentials_id: string;
     user_id: string;
     email: string;
     first_name: string;
@@ -21,7 +21,7 @@ export interface UserCredentials {
 }
 
 interface UserCredentialsTable extends Record<string, PostgresDataType> {
-    user_credentials_id: PostgresDataType.SERIAL;
+    user_credentials_id: PostgresDataType.UUID;
     user_id: PostgresDataType.UUID;
     email: PostgresDataType.TEXT;
     first_name: PostgresDataType.TEXT;
@@ -47,7 +47,7 @@ enum UserCredentialsColumn {
 }
 
 const userCredentialsTable: UserCredentialsTable = {
-    user_credentials_id: PostgresDataType.SERIAL,
+    user_credentials_id: PostgresDataType.UUID,
     user_id: PostgresDataType.UUID,
     email: PostgresDataType.TEXT,
     first_name: PostgresDataType.TEXT,
@@ -68,6 +68,7 @@ export const CREATE_USER_CREDENTIALS_TABLE_QUERY = applyColumnConstraints<
         pk: UserCredentialsColumn.USER_CREDENTIALS_ID,
     }),
     {
+        user_credentials_id: { notNull: true, default: ColumnDefaultValue.UUID },
         user_id: { notNull: true, unique: true },
         phone: { notNull: true, default: ColumnDefaultValue.EMPTY_JSONB },
         email: { notNull: true, unique: true },

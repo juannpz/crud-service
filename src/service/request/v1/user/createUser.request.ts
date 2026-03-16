@@ -6,11 +6,11 @@ import {
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router, ValidationResult } from "@juannpz/deno-service-tools";
+import { buildRequestResponse, Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
-    user_status_id: number;
-    role_id: number;
+    user_status_id: string;
+    role_id: string;
     metadata: Record<string, unknown>;
 }
 
@@ -18,7 +18,9 @@ export const createUserRequest = Router.post<ExtendedContextVariables>("/user")
     .describe("User creation")
     .body<Body>()
     .validateBody(validateBody)
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
@@ -30,17 +32,16 @@ export const createUserRequest = Router.post<ExtendedContextVariables>("/user")
             table: DatabaseTable.USERS,
             retrievalFormat: format,
             type: QueryType.INSERT,
-            isParameterized: false,
+            isParameterized: true,
             data: [{ user_status_id, role_id, metadata }],
         });
 
         if (!createUserResult.ok) {
             console.error(createUserResult.message);
 
-            return context.c.json({
-                message: createUserResult.message,
-                error: createUserResult.error,
-            });
+            const response = buildRequestResponse(createUserResult);
+
+            return context.c.json(response, response.code);
         }
 
         return context.c.json({

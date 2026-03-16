@@ -2,7 +2,7 @@ import { applyColumnConstraints, ColumnDefaultValue, createTable } from "@juannp
 import { DatabaseTable, PostgresDataType } from "../database.definition.ts";
 
 export interface UserStatus {
-    user_status_id: number;
+    user_status_id: string;
     name: string;
     description: string;
     created_at: Date;
@@ -10,7 +10,7 @@ export interface UserStatus {
 }
 
 interface UserStatusTable extends Record<string, PostgresDataType> {
-    user_status_id: PostgresDataType.SERIAL;
+    user_status_id: PostgresDataType.UUID;
     name: PostgresDataType.TEXT;
     description: PostgresDataType.TEXT;
     created_at: PostgresDataType.TIMESTAMPTZ;
@@ -26,7 +26,7 @@ enum UserStatusColumn {
 }
 
 const userStatusTable: UserStatusTable = {
-    user_status_id: PostgresDataType.SERIAL,
+    user_status_id: PostgresDataType.UUID,
     name: PostgresDataType.TEXT,
     description: PostgresDataType.TEXT,
     created_at: PostgresDataType.TIMESTAMPTZ,
@@ -40,6 +40,7 @@ export const CREATE_USER_STATUS_TABLE_QUERY = applyColumnConstraints<
         pk: UserStatusColumn.USER_STATUS_ID,
     }),
     {
+        user_status_id: { notNull: true, default: ColumnDefaultValue.UUID },
         name: { notNull: true, unique: true },
         description: { notNull: true },
         created_at: { notNull: true, default: ColumnDefaultValue.NOW },

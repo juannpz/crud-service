@@ -25,7 +25,7 @@ export interface TextSearchSelectQueryOptions extends BaseQueryOptions {
 
 export interface InsertQueryOptions extends BaseQueryOptions {
     type: QueryType.INSERT;
-    isParameterized: false;
+    isParameterized: true;
     data: Iterable<Record<string, unknown>>;
 }
 
@@ -85,6 +85,12 @@ export enum DatabaseTable {
     USER_STATUS = "user_status",
     ROLES = "roles",
     API_KEYS = "api_keys",
+    CATEGORIES = "categories",
+    SALES_CHANNELS = "sales_channels",
+    PRODUCTS = "products",
+    PRODUCT_PRICES = "product_prices",
+    INVENTORY_TRANSACTIONS = "inventory_transactions",
+    V_PRODUCTS_COMPLETE = "v_products_complete",
 }
 
 export enum QueryOperator {
@@ -100,6 +106,7 @@ export enum QueryOperator {
     EXISTS = "EXISTS",
     IS_NULL = "IS NULL",
     IS_NOT_NULL = "IS NOT NULL",
+    ILIKE = "ILIKE",
 }
 
 export enum QuerySeparator {

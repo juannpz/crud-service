@@ -3,7 +3,7 @@ import { DatabaseTable, PostgresDataType } from "../database.definition.ts";
 import { UserColumn } from "../users/users.definition.ts";
 
 export interface ApiKey {
-    api_key_id: number;
+    api_key_id: string;
     user_id: string;
     public_key: string;
     private_key: string;
@@ -13,7 +13,7 @@ export interface ApiKey {
 }
 
 interface ApiKeysTable extends Record<string, PostgresDataType> {
-    api_key_id: PostgresDataType.SERIAL;
+    api_key_id: PostgresDataType.UUID;
     user_id: PostgresDataType.UUID;
     public_key: PostgresDataType.TEXT;
     private_key: PostgresDataType.TEXT;
@@ -33,7 +33,7 @@ enum ApiKeysColumn {
 }
 
 const apiKeysTable: ApiKeysTable = {
-    api_key_id: PostgresDataType.SERIAL,
+    api_key_id: PostgresDataType.UUID,
     user_id: PostgresDataType.UUID,
     public_key: PostgresDataType.TEXT,
     private_key: PostgresDataType.TEXT,
@@ -51,7 +51,8 @@ export const CREATE_API_KEYS_TABLE_QUERY = applyColumnConstraints<
         pk: ApiKeysColumn.API_KEY_ID,
     }),
     {
-        user_id: { notNull: true, unique: true },
+        api_key_id: { notNull: true, default: ColumnDefaultValue.UUID },
+        user_id: { notNull: true },
         public_key: { notNull: true, unique: true },
         private_key: { notNull: true, unique: true },
         description: { notNull: true },

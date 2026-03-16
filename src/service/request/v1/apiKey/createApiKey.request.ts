@@ -21,7 +21,9 @@ export const createApiKeyRequest = Router.post<ExtendedContextVariables>(
     .describe("Api key creation")
     .body<Body>()
     .validateBody(validateBody)
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
@@ -33,7 +35,7 @@ export const createApiKeyRequest = Router.post<ExtendedContextVariables>(
             table: DatabaseTable.API_KEYS,
             retrievalFormat: format,
             type: QueryType.INSERT,
-            isParameterized: false,
+            isParameterized: true,
             data: [{ user_id, public_key, private_key, description }],
         });
 

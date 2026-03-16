@@ -28,7 +28,9 @@ export const getApiKeyRequest = Router.get<ExtendedContextVariables>(
         },
     })
     .queryParam<"user_id", string>("user_id")
-    .queryParam<"format", RetrievalFormat>("format", { required: true })
+    .queryParam<"format", RetrievalFormat>("format", {
+        defaultValue: RetrievalFormat.OBJECT,
+    })
     .headerParam("Authorization")
     .withVariables<ExtendedContextVariables>()
     .handler(async (context) => {
