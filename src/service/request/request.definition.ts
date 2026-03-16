@@ -24,19 +24,6 @@ export interface ExtendedContextVariables extends ContextVariables {
     userId: number;
 }
 
-export function addRequest(
-    server: ServerBuilder<ExtendedContextVariables>,
-    config: ServiceConfig,
-) {
-    addUserRequest(server, config);
-    addUserCredentialsRequest(server, config);
-    addUserStatusRequest(server, config);
-    addRolesRequest(server, config);
-    addApiKeyRequest(server, config);
-    addProductRequest(server, config);
-    addInventoryTransactionRequest(server, config);
-}
-
 const userRequest = [getUserRequest, createUserRequest, updateUserRequest];
 const userCredentialsRequest = [
     getUserCredentialsRequest,
@@ -49,6 +36,20 @@ const apiKeyRequest = [getApiKeyRequest, createApiKeyRequest];
 const productRequest = [getProductRequest, createProductRequest, updateProductRequest];
 const inventoryTransactionRequest = [createInventoryTransactionRequest];
 const categoryRequest = [getCategoryRequest, createCategoryRequest];
+
+export function addRequest(
+    server: ServerBuilder<ExtendedContextVariables>,
+    config: ServiceConfig,
+) {
+    addUserRequest(server, config);
+    addUserCredentialsRequest(server, config);
+    addUserStatusRequest(server, config);
+    addRolesRequest(server, config);
+    addApiKeyRequest(server, config);
+    addProductRequest(server, config);
+    addInventoryTransactionRequest(server, config);
+	addCategoryRequest(server, config);
+}
 
 function addUserRequest(
     server: ServerBuilder<ExtendedContextVariables>,
