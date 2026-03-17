@@ -41,7 +41,7 @@ export const createCategoryRequest = Router.post<ExtendedContextVariables>("/cat
 
             const response = buildRequestResponse(createCategoryResult);
 
-            return context.c.json(response, response.code);
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

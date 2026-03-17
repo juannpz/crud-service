@@ -41,7 +41,7 @@ export const createUserRequest = Router.post<ExtendedContextVariables>("/user")
 
             const response = buildRequestResponse(createUserResult);
 
-            return context.c.json(response, response.code);
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

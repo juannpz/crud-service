@@ -7,7 +7,7 @@ import {
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
+import { buildRequestResponse, Router } from "@juannpz/deno-service-tools";
 
 export const getUserRequest = Router.get<ExtendedContextVariables>(
     "/user/:user_id?",
@@ -42,7 +42,9 @@ export const getUserRequest = Router.get<ExtendedContextVariables>(
         if (!getUserResult.ok) {
             console.error(getUserResult.message);
 
-            return context.c.json({ message: getUserResult.message, error: getUserResult.error });
+			const response = buildRequestResponse(getUserResult);
+
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

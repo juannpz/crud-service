@@ -1,5 +1,6 @@
 import {
     DatabaseTable,
+    QueryOperator,
     QuerySeparator,
     QueryType,
     RetrievalFormat,
@@ -7,26 +8,14 @@ import {
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router } from "@juannpz/deno-service-tools";
+import { buildRequestResponse, Router } from "@juannpz/deno-service-tools";
 
 export const getRoleRequest = Router.get<ExtendedContextVariables>(
     "/role/:role_id?",
 )
     .describe("Role retrieval")
-    .pathParam<"role_id", number | undefined>("role_id", {
-        transform: (value) => {
-            if (!value) return undefined;
-            const parsed = parseInt(value as string);
-            return isNaN(parsed) ? undefined : parsed;
-        },
-    })
-    .queryParam<"role_id", number | undefined>("role_id", {
-        transform: (value) => {
-            if (!value) return undefined;
-            const parsed = parseInt(value as string);
-            return isNaN(parsed) ? undefined : parsed;
-        },
-    })
+    .pathParam<"role_id", string>("role_id")
+    .queryParam<"role_id", string>("role_id")
     .queryParam<"name", string>("name")
     .queryParam<"format", RetrievalFormat>("format", {
         defaultValue: RetrievalFormat.OBJECT,
@@ -38,22 +27,35 @@ export const getRoleRequest = Router.get<ExtendedContextVariables>(
 
         const roleId = context.params.role_id ?? context.query.role_id;
 
+        const conditions: Record<string, unknown> = {
+            role_id: roleId,
+        };
+
+        if (name) {
+            conditions.name = {
+                op: QueryOperator.ILIKE,
+                val: `%${name}%`,
+            };
+        }
+
         const getRoleResult = await DatabaseManager.query<User>({
-            conditions: {
-                role_id: roleId,
-                name,
-            },
-            separator: QuerySeparator.OR,
-            table: DatabaseTable.ROLES,
-            retrievalFormat: format,
             type: QueryType.SELECT,
+            table: DatabaseTable.ROLES,
             isTextSearch: false,
+            retrievalFormat: format,
+            separator: QuerySeparator.AND,
+            operator: QueryOperator.EQUALS,
+            conditions,
         });
 
         if (!getRoleResult.ok) {
-            console.error(getRoleResult.message);
+            console.error(getRoleResult.error);
+            const response = buildRequestResponse(getRoleResult);
 
-            return context.c.json({ message: getRoleResult.message, error: getRoleResult.error });
+            return context.c.json(
+                { message: response.message, detail: response.detail },
+                response.code,
+            );
         }
 
         return context.c.json({

@@ -10,7 +10,7 @@ import { buildRequestResponse, Router, ValidationResult } from "@juannpz/deno-se
 import { hash } from "@felix/bcrypt";
 
 interface Body extends Record<string, unknown> {
-    user_id: number;
+    user_id: string;
     email: string;
     first_name: string;
     last_name: string;
@@ -61,7 +61,7 @@ export const createUserCredentialsRequest = Router.post<ExtendedContextVariables
 
             const response = buildRequestResponse(createUserCredentialsResult);
 
-            return context.c.json(response, response.code);
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         // sanitize user credentials object by removing password

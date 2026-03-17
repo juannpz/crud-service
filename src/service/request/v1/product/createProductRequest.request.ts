@@ -48,7 +48,7 @@ export const createProductRequest = Router.post<ExtendedContextVariables>("/prod
 
             const response = buildRequestResponse(createProductResult);
 
-            return context.c.json(response, response.code);
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

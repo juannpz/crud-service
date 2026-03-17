@@ -6,7 +6,7 @@ import {
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 import { User } from "../../../database/users/users.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router, ValidationResult } from "@juannpz/deno-service-tools";
+import { buildRequestResponse, Router, ValidationResult } from "@juannpz/deno-service-tools";
 
 interface Body extends Record<string, unknown> {
     user_status_id: number;
@@ -48,10 +48,9 @@ export const updateUserRequest = Router.put<ExtendedContextVariables>(
         if (!updateUserResult.ok) {
             console.error(updateUserResult.message);
 
-            return context.c.json({
-                message: updateUserResult.message,
-                error: updateUserResult.error,
-            });
+			const response = buildRequestResponse(updateUserResult);
+
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

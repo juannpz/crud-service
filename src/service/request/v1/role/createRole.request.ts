@@ -5,7 +5,7 @@ import {
 } from "../../../database/database.definition.ts";
 import { UserStatus } from "../../../database/userStatus/userStatus.definition.ts";
 import { ExtendedContextVariables } from "../../request.definition.ts";
-import { Router, ValidationResult } from "@juannpz/deno-service-tools";
+import { buildRequestResponse, Router, ValidationResult } from "@juannpz/deno-service-tools";
 import { DatabaseManager } from "../../../manager/DatabaseManager.ts";
 
 interface Body extends Record<string, unknown> {
@@ -40,10 +40,9 @@ export const createRoleRequest = Router.post<ExtendedContextVariables>(
         if (!createRoleResult.ok) {
             console.error(createRoleResult.message);
 
-            return context.c.json({
-                message: createRoleResult.message,
-                error: createRoleResult.error,
-            }, 400);
+			const response = buildRequestResponse(createRoleResult);
+
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

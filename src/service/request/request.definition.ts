@@ -48,7 +48,7 @@ export function addRequest(
     addApiKeyRequest(server, config);
     addProductRequest(server, config);
     addInventoryTransactionRequest(server, config);
-	addCategoryRequest(server, config);
+    addCategoryRequest(server, config);
 }
 
 function addUserRequest(

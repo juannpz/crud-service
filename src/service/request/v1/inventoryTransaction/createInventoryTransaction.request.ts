@@ -49,7 +49,7 @@ export const createInventoryTransactionRequest = Router.post<ExtendedContextVari
 
             const response = buildRequestResponse(createTransactionResult);
 
-            return context.c.json(response, response.code);
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({

@@ -56,11 +56,11 @@ export const updateProductRequest = Router.patch<ExtendedContextVariables>(
         });
 
         if (!updateProductResult.ok) {
-            const response = buildRequestResponse(updateProductResult);
-            response.code = 400;
-
+			const response = buildRequestResponse(updateProductResult);
+			
             console.error(response.message);
-            return context.c.json(response, response.code);
+			
+            return context.c.json({ message: response.message, detail: response.detail }, response.code);
         }
 
         return context.c.json({
